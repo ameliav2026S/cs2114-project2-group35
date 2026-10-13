@@ -130,7 +130,7 @@ import java.util.Iterator;
  *
  * @param <T> the type of entries stored in the chain
  */
-public class LinkedChain<T>
+public class LinkedChain<T> implements Iterable<T>
 {
     private Node<T> firstNode;   // reference to the first node, or null
     private int numberOfEntries; // number of nodes in the chain
