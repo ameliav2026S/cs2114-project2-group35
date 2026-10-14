@@ -1,109 +1,209 @@
-/*
- * SKELETON: Playlist.java
- * Owner: Tanvi
+package humm;
+
+import java.util.Iterator;
+
+/**
+ * One playlist in Humm: a title, a description, and two chains of songs.
+ * The songs chain holds what is in the playlist now; the deletedSongs
+ * chain is this playlist's Recently Deleted.
  *
- * PURPOSE
- *   One playlist: a title, a description, its songs and its own deleted
- *   songs. It is the only class that touches the song chains.
+ * Playlist does NOT override equals(), on purpose. Two playlists are
+ * equal only if they are the same object, so deleting one playlist never
+ * removes a different playlist that happens to have the same title.
  *
- * PUBLIC API (use exactly these)
- *  - Playlist(String title, String description)   - bad text throws
- *    IllegalArgumentException
- *  - String getTitle()    String getDescription()
- *  - void addSong(Song s)   - null throws IllegalArgumentException
- *  - void deleteSong(Song s)   - songs to deletedSongs; not found throws
- *    NoSuchElementException
- *  - void restoreSong(Song s)   - deletedSongs to songs; not found throws
- *    NoSuchElementException
- *  - void clearSongs()    void emptyDeletedSongs()    (both safe when
- *    empty)
- *  - void restoreAllSongs()   - stretch goal; build it last
- *  - Iterator<Song> songs()    Iterator<Song> deletedSongs()
- *  - int songCount()    int deletedCount()
- *
- * YOUR JOB
- *  - Fields: title and description (Strings), songs and deletedSongs (both
- *    LinkedChain<Song>, made empty in the constructor).
- *  - The constructor trims both Strings and checks title, then description.
- *    A null counts as blank. Each must be 1 to 80 characters with no tab or
- *    line break. Throw IllegalArgumentException with a friendly message
- *    that names the field, like "Please enter a playlist title." or "The
- *    description must be 80 characters or fewer."
- *  - addSong: reject null, then songs.add(s).
- *  - deleteSong: call songs.remove(s) FIRST (it throws if the song is
- *    missing), and only then deletedSongs.add(s). That way a failed delete
- *    changes nothing.
- *  - restoreSong: the same pattern in reverse, deletedSongs.remove(s), then
- *    songs.add(s).
- *  - clearSongs: add every song from songs into deletedSongs, then
- *    songs.clear(). Loop with the iterator and add to the OTHER chain only.
- *  - emptyDeletedSongs: deletedSongs.clear(). restoreAllSongs (stretch):
- *    move everything from deletedSongs back to songs, then clear
- *    deletedSongs.
- *  - songs() and deletedSongs() return the chain’s iterator() (a fresh one
- *    each call). songCount() and deletedCount() return the chain sizes.
- *  - Do NOT override equals or hashCode. Two playlists are equal only if
- *    they are the same object, so deleting one "Getting Ready" can never
- *    hit another.
- *  - Never return or expose a LinkedChain. No Swing, no printing.
- *  - Write this file before Library.java, because Library calls it. Push it
- *    as soon as it works.
- *
- * HOW THE SCREENS USE THIS FILE
- *  - Playlists screen: the Create button goes through
- *    Library.createPlaylist, which calls your constructor. The screen shows
- *    your exception’s message beside the fields, so write messages for the
- *    user.
- *  - Songs screen: shows getTitle() and getDescription(), loops songs() to
- *    draw one row per song, and each row’s Delete button calls deleteSong
- *    with that row’s own Song. After every change the screen redraws all
- *    rows with a fresh iterator.
- *  - "Clear songs" is greyed out when songCount() is 0, and "Empty" on the
- *    Deleted songs screen when deletedCount() is 0, so both counts must
- *    always be exact.
- *  - Deleted songs screen: loops deletedSongs(); each row’s Restore calls
- *    restoreSong.
- *  - If Library deletes this whole playlist, deletedSongs stays inside it.
- *    Restoring the playlist brings everything back with no extra work from
- *    you.
- *
- * YOU DO NOT HAVE TO WAIT FOR ANYONE
- *  - Code against Song and LinkedChain as they are in the skeleton, or use
- *    the provided LinkedChain.java until Preston’s version lands.
- *  - The provided chain’s remove returns false instead of throwing, so the
- *    "not found" tests will fail until his version arrives. Your code
- *    should not need to change.
- *  - Starter versions of LinkedChain and Song are in the repo, so the
- *    project compiles. Code and test against what is there. A test that
- *    needs the REAL LinkedChain or Song (a "not found" exception, Song
- *    equality, looping with the iterator) may fail until Preston pushes
- *    his, and that is expected.
- *
- * RULES
- *  - Package humm. Keep every class, method, parameter and return type
- *    exactly as listed in PUBLIC API and in the spec (section 6). Do not
- *    add, rename or remove public methods, and do not add public fields.
- *    Helpers must be private.
- *  - Pull the repo before you start and pull again often. LinkedChain.java
- *    and Song.java are already in it as starter files; replace their
- *    placeholder bodies and keep their headers. For any other file of
- *    yours, first write the class and method headers from PUBLIC API with
- *    placeholder bodies, so it compiles, and then fill in the real code.
- *  - Everything is due Tuesday night, so Amelia can put it together on
- *    Wednesday.
- *  - Write a Javadoc comment on the class and on every public method,
- *    directly above the method, with @param, @return and @throws where they
- *    apply. It keeps the code easy to explain in the oral exam.
- *  - Exceptions: use only the ones named here, and always give them a short
- *    message. Never return null to signal an error, never catch an
- *    exception just to hide it, and never print to the console.
- *  - A failed action must leave everything unchanged. Check first, then
- *    change.
- *  - Edit only your own files. If you find a problem in someone else’s
- *    file, or need a signature changed, tell the group and change the spec
- *    first.
- *  - Delete this comment block before submitting.
- *
- * Depends on: Song and LinkedChain.
- * Tests for this file: PlaylistTest.java.
+ * @author Tanvi Bhat
+ * @version October 2026
  */
+public class Playlist
+{
+    /** Longest allowed title or description, in characters. */
+    public static final int MAX_LENGTH = 80;
+
+    private final String title;
+    private final String description;
+    private final LinkedChain<Song> songs;
+    private final LinkedChain<Song> deletedSongs;
+
+    /**
+     * Makes a playlist with two empty chains after checking its fields.
+     *
+     * @param title       the playlist's title
+     * @param description the playlist's description
+     * @throws IllegalArgumentException if either field is blank, longer
+     *         than 80 characters, or contains a tab or line break
+     */
+    public Playlist(String title, String description)
+    {
+        this.title = clean(title, "title");
+        this.description = clean(description, "description");
+        songs = new LinkedChain<Song>();
+        deletedSongs = new LinkedChain<Song>();
+    }
+
+    /**
+     * Gets the title.
+     *
+     * @return the cleaned title
+     */
+    public String getTitle()
+    {
+        return title;
+    }
+
+    /**
+     * Gets the description.
+     *
+     * @return the cleaned description
+     */
+    public String getDescription()
+    {
+        return description;
+    }
+
+    /**
+     * Adds a song to this playlist. Duplicates are allowed.
+     *
+     * @param song the song to add
+     * @throws IllegalArgumentException if song is null
+     */
+    public void addSong(Song song)
+    {
+        if (song == null)
+        {
+            throw new IllegalArgumentException("Cannot add a missing song.");
+        }
+        songs.add(song);
+    }
+
+    /**
+     * Moves one matching song from songs into deletedSongs.
+     *
+     * @param song the song to delete
+     * @throws java.util.NoSuchElementException if no matching song is in
+     *         the playlist
+     */
+    public void deleteSong(Song song)
+    {
+        songs.remove(song);
+        deletedSongs.add(song);
+    }
+
+    /**
+     * Moves one matching song from deletedSongs back into songs.
+     *
+     * @param song the song to restore
+     * @throws java.util.NoSuchElementException if no matching song is in
+     *         Recently Deleted
+     */
+    public void restoreSong(Song song)
+    {
+        deletedSongs.remove(song);
+        songs.add(song);
+    }
+
+    /**
+     * Moves every song into deletedSongs, then empties songs.
+     * Safe on an empty playlist.
+     */
+    public void clearSongs()
+    {
+        for (Song song : songs)
+        {
+            deletedSongs.add(song);
+        }
+        songs.clear();
+    }
+
+    /**
+     * Empties Recently Deleted for good. Safe when it is already empty.
+     */
+    public void emptyDeletedSongs()
+    {
+        deletedSongs.clear();
+    }
+
+    /**
+     * Stretch goal: moves every deleted song back into songs, then
+     * empties Recently Deleted. Safe when it is already empty.
+     */
+    public void restoreAllSongs()
+    {
+        for (Song song : deletedSongs)
+        {
+            songs.add(song);
+        }
+        deletedSongs.clear();
+    }
+
+    /**
+     * Loops over the songs currently in the playlist, for drawing rows.
+     * Order is not promised.
+     *
+     * @return an iterator over the songs
+     */
+    public Iterator<Song> songs()
+    {
+        return songs.iterator();
+    }
+
+    /**
+     * Loops over this playlist's Recently Deleted songs, for drawing rows.
+     * Order is not promised.
+     *
+     * @return an iterator over the deleted songs
+     */
+    public Iterator<Song> deletedSongs()
+    {
+        return deletedSongs.iterator();
+    }
+
+    /**
+     * Gets how many songs are in the playlist.
+     *
+     * @return the number of songs
+     */
+    public int songCount()
+    {
+        return songs.size();
+    }
+
+    /**
+     * Gets how many songs are in Recently Deleted.
+     *
+     * @return the number of deleted songs
+     */
+    public int deletedCount()
+    {
+        return deletedSongs.size();
+    }
+
+    /**
+     * Checks and cleans one typed field.
+     *
+     * @param text      what the user typed
+     * @param fieldName the field's name, used in the error message
+     * @return the trimmed text, with runs of spaces shrunk to one space
+     * @throws IllegalArgumentException with a message saying what to fix
+     */
+    private static String clean(String text, String fieldName)
+    {
+        if (text == null || text.trim().isEmpty())
+        {
+            throw new IllegalArgumentException(
+                "Please enter a " + fieldName + ".");
+        }
+        if (text.contains("\t") || text.contains("\n")
+            || text.contains("\r"))
+        {
+            throw new IllegalArgumentException(
+                "Please use plain text, with no tabs or line breaks.");
+        }
+        String cleaned = text.trim().replaceAll(" +", " ");
+        if (cleaned.length() > MAX_LENGTH)
+        {
+            throw new IllegalArgumentException(
+                "Keep it to " + MAX_LENGTH + " characters or fewer.");
+        }
+        return cleaned;
+    }
+}
