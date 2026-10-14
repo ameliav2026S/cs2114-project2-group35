@@ -1,4 +1,3 @@
-
 package humm;
 
 import java.util.Iterator;
@@ -12,8 +11,7 @@ import java.util.NoSuchElementException;
  * @author CS 2114 Staff
  * @author Preston Moore
  * @version October 2026
- * @param <T>
- *            type of item held in the chain
+ * @param <T> type of item held in the chain
  */
 public class LinkedChain<T>
     implements Iterable<T>
