@@ -1,59 +1,110 @@
-/*
- * SKELETON: SongTest.java
- * Owner: Preston
- *
- * PURPOSE
- *   Proves a Song accepts good text, rejects bad text with a helpful
- *   message, and compares the way the app needs.
- *
- * YOUR JOB
- *  - Constructor: a valid title and artist works. Do the bad cases for BOTH
- *    fields: blank, spaces only, null, 81 characters, a tab inside, a line
- *    break inside. Each throws IllegalArgumentException and the message is
- *    not empty. If both fields are bad, the title message wins.
- *  - Boundary: exactly 80 characters is accepted for each field. Outer
- *    spaces are trimmed, so " Hello " gives getTitle() "Hello".
- *  - equals: "Blinding Lights" by "The Weeknd" and "blinding  lights" by
- *    "the weeknd" (different capitals, extra space) are equal. Same title
- *    with a different artist is not equal. equals(null) and a non-Song are
- *    false.
- *  - hashCode is the same for two equal songs. toString gives "title by
- *    artist".
- *
- * HOW THE SCREENS USE THIS FILE
- *  - The Songs screen shows your exception messages directly, so check each
- *    failure gives a different, useful message.
- *
- * YOU DO NOT HAVE TO WAIT FOR ANYONE
- *  - Nothing here waits on anyone.
- *  - Every other class already exists as a skeleton with the right
- *    signatures, so the project compiles. Code and test against them.
- *
- * RULES
- *  - Package humm. Keep every class, method, parameter and return type
- *    exactly as listed in PUBLIC API and in the spec (section 6). Do not
- *    add, rename or remove public methods, and do not add public fields.
- *    Helpers must be private.
- *  - The skeleton already has the headers. Replace the placeholder bodies
- *    and keep the headers as they are.
- *  - Write a Javadoc comment on the class and on every public method,
- *    directly above the method, with @param, @return and @throws where they
- *    apply. It keeps the code easy to explain in the oral exam.
- *  - Exceptions: use only the ones named here, and always give them a short
- *    message. Never return null to signal an error, never catch an
- *    exception just to hide it, and never print to the console.
- *  - A failed action must leave everything unchanged. Check first, then
- *    change.
- *  - Edit only your own files. If you find a problem in someone else’s
- *    file, or need a signature changed, tell the group and change the spec
- *    first.
- *  - Delete this comment block before submitting.
- *  - Tests use JUnit 5 (org.junit.jupiter.api.Test, Assertions.assertThrows
- *    and friends, @BeforeEach), matching pom.xml. These are plain classes;
- *    do not extend anything. Make fresh objects in @BeforeEach so tests
- *    never depend on each other. No Swing in tests, and never depend on the
- *    order of items in a chain.
- *
- * Tests: Song. Test plan, section 8.
- * Tests for this file: tests Song.
- */
+
+package humm;
+
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Test;
+
+/** Tests Song validation, equality, hashing, and presentation. */
+public class SongTest
+{
+    /** Valid fields are stored and outer spaces are trimmed. */
+    @Test
+    public void validSongAndTrim()
+    {
+        Song song = new Song(" Hello ", " Adele ");
+        assertEquals("Hello", song.getTitle());
+        assertEquals("Adele", song.getArtist());
+        assertEquals("Hello by Adele", song.toString());
+    }
+
+
+    /** All invalid field variants throw informative errors for both fields. */
+    @Test
+    public void invalidFields()
+    {
+        String[] invalid =
+            { null, "", "   ", "x".repeat(81), "a\tb", "a\nb", "a\rb" };
+        for (String value : invalid)
+        {
+            IllegalArgumentException titleError = assertThrows(
+                IllegalArgumentException.class,
+                () -> new Song(value, "Valid Artist"));
+            assertFalse(titleError.getMessage().isBlank());
+            assertTrue(titleError.getMessage().contains("title"));
+            IllegalArgumentException artistError = assertThrows(
+                IllegalArgumentException.class,
+                () -> new Song("Valid Title", value));
+            assertFalse(artistError.getMessage().isBlank());
+            assertTrue(artistError.getMessage().contains("artist"));
+        }
+    }
+
+
+    /** Checks specific messages for each invalid-input category. */
+    @Test
+    public void errorMessages()
+    {
+        assertEquals(
+            "Please enter a title.",
+            assertThrows(
+                IllegalArgumentException.class,
+                () -> new Song(" ", "A")).getMessage());
+        assertEquals(
+            "The artist must be 80 characters or fewer.",
+            assertThrows(
+                IllegalArgumentException.class,
+                () -> new Song("T", "a".repeat(81))).getMessage());
+        assertEquals(
+            "The title can only use plain text, with no tabs or line breaks.",
+            assertThrows(
+                IllegalArgumentException.class,
+                () -> new Song("a\tb", "A")).getMessage());
+    }
+
+
+    /** The title is checked before the artist. */
+    @Test
+    public void titleValidationComesFirst()
+    {
+        IllegalArgumentException error = assertThrows(
+            IllegalArgumentException.class,
+            () -> new Song(null, null));
+        assertEquals("Please enter a title.", error.getMessage());
+    }
+
+
+    /** Exactly 80 characters is valid in both fields. */
+    @Test
+    public void boundaryAtEightyCharacters()
+    {
+        String eighty = "x".repeat(80);
+        Song song = new Song(eighty, eighty);
+        assertEquals(80, song.getTitle().length());
+        assertEquals(80, song.getArtist().length());
+    }
+
+
+    /** Case and repeated spaces do not affect equality or hash codes. */
+    @Test
+    public void normalizedEqualityAndHashCode()
+    {
+        Song first = new Song("Blinding Lights", "The Weeknd");
+        Song second = new Song("blinding  lights", "the weeknd");
+        assertEquals(first, second);
+        assertEquals(second, first);
+        assertEquals(first, first);
+        assertEquals(first.hashCode(), second.hashCode());
+    }
+
+
+    /** Different titles, artists, types, or null are not equal. */
+    @Test
+    public void unequalSongsAndOtherObjects()
+    {
+        Song song = new Song("Blinding Lights", "The Weeknd");
+        assertNotEquals(song, new Song("Blinding Lights", "Other Artist"));
+        assertNotEquals(song, new Song("Other Title", "The Weeknd"));
+        assertNotEquals(song, null);
+        assertNotEquals(song, "Blinding Lights");
+    }
+}
