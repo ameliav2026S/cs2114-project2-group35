@@ -432,6 +432,28 @@ public class HummWindow
 
 
     /**
+     * A page heading with the title in the middle and the turquoise
+     * underline centered under it.
+     *
+     * @param title the title label
+     * @return the heading
+     */
+    static JPanel centeredHeading(JLabel title)
+    {
+        JPanel heading = new JPanel(new java.awt.GridBagLayout());
+        heading.setOpaque(false);
+        java.awt.GridBagConstraints at = new java.awt.GridBagConstraints();
+        at.gridx = 0;
+        at.gridy = java.awt.GridBagConstraints.RELATIVE;
+        centered(title);
+        heading.add(title, at);
+        at.insets = new java.awt.Insets(10, 0, 0, 0);
+        heading.add(bar(64, 6), at);
+        return heading;
+    }
+
+
+    /**
      * A row of buttons, centered.
      *
      * @param buttons the buttons, left to right
@@ -692,7 +714,8 @@ public class HummWindow
                 return super.getPreferredSize();
             }
             java.awt.FontMetrics fm = getFontMetrics(getFont());
-            return new Dimension(fm.stringWidth(getText()) + 2 * SIDE,
+            return new Dimension(fm.stringWidth(getText()) + 2 * SIDE
+                + Math.round(getFont().getSize2D() * 0.5f),
                 Math.max(44, fm.getHeight() + 20));
         }
 
@@ -725,16 +748,18 @@ public class HummWindow
                 g2.setStroke(new java.awt.BasicStroke(2f));
                 g2.drawRoundRect(1, 1, w - 2, h - 2, h - 2, h - 2);
             }
+            // the words, drawn by hand so they can never be cut to "..."
+            g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
+                RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+            g2.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS,
+                RenderingHints.VALUE_FRACTIONALMETRICS_ON);
+            g2.setFont(getFont());
+            g2.setColor(ink);
+            java.awt.FontMetrics fm = g2.getFontMetrics();
+            int x = (w - fm.stringWidth(getText())) / 2;
+            int y = (h - fm.getHeight()) / 2 + fm.getAscent();
+            g2.drawString(getText(), x, y);
             g2.dispose();
-            // the words, in this button's own color
-            Graphics2D text = (Graphics2D) g.create();
-            if (!isEnabled())
-            {
-                text.setComposite(java.awt.AlphaComposite.getInstance(
-                    java.awt.AlphaComposite.SRC_OVER, 0.4f));
-            }
-            super.paintComponent(text);
-            text.dispose();
         }
     }
 

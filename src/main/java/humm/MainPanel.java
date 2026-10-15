@@ -43,10 +43,10 @@ public class MainPanel
         column.add(HummWindow.centered(HummWindow.label("Humm",
             HummWindow.heading(88f, true), HummWindow.PURPLE)), at);
         column.add(HummWindow.bar(120, 8), at);
-        column.add(HummWindow.centered(HummWindow.label("Playlists, kept close.",
+        column.add(HummWindow.centered(HummWindow.label("Music, kept close.",
             HummWindow.body(20f, false), HummWindow.MUTED)), at);
 
-        JButton open = HummWindow.button("Open Playlists", HummWindow.PURPLE,
+        JButton open = HummWindow.button("Get started", HummWindow.PURPLE,
             HummWindow.WHITE);
         open.setFont(HummWindow.body(18f, true));
         open.addActionListener(e -> window.showScreen(HummWindow.PLAYLISTS));

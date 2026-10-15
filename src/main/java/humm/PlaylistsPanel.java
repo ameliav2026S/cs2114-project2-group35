@@ -51,11 +51,10 @@ public class PlaylistsPanel
 
         JLabel title = HummWindow.label("Tune in",
             HummWindow.heading(30f, false), HummWindow.PURPLE);
-        JPanel head = HummWindow.heading(title, null, true);
-        JPanel headRow = new JPanel(new BorderLayout());
+        JPanel headRow = new JPanel(new BorderLayout(0, 6));
         headRow.setOpaque(false);
-        headRow.add(head, BorderLayout.EAST);
-        headRow.add(notice, BorderLayout.WEST);
+        headRow.add(HummWindow.centeredHeading(title), BorderLayout.CENTER);
+        headRow.add(HummWindow.centered(notice), BorderLayout.SOUTH);
 
         JButton home = HummWindow.button("Home", HummWindow.PURPLE,
             HummWindow.WHITE);
