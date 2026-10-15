@@ -34,7 +34,7 @@ public class SongsPanel
     private final JLabel notice =
         HummWindow.label(" ", HummWindow.body(13f, false), HummWindow.ALERT);
     private final JButton clearSongs = HummWindow.button("Clear songs",
-        HummWindow.WHITE, HummWindow.ALERT);
+        HummWindow.ALERT, HummWindow.WHITE);
     private final JButton deleted = HummWindow.button("Deleted songs",
         HummWindow.TURQUOISE, HummWindow.INK);
 
@@ -56,7 +56,7 @@ public class SongsPanel
         headRow.add(notice, BorderLayout.EAST);
 
         JButton back = HummWindow.button("Back to playlists",
-            HummWindow.WHITE, HummWindow.PURPLE);
+            HummWindow.PURPLE, HummWindow.WHITE);
         back.addActionListener(e -> window.showScreen(HummWindow.PLAYLISTS));
         clearSongs.addActionListener(e -> {
             Playlist playlist = window.getChosenPlaylist();
@@ -87,7 +87,7 @@ public class SongsPanel
         JPanel card = HummWindow.formCard("Add a song",
             new String[] {"Song title", "Artist"},
             new JTextField[] {titleField, artistField}, message, cancel, add);
-        setBird(HummWindow.pictureButton("vinyl3.GIF", "Add a song"),
+        setBird(HummWindow.pictureButton("vinyl4.GIF", "Add a song"),
             false, card);
     }
 
@@ -115,7 +115,7 @@ public class SongsPanel
         }
         catch (IllegalArgumentException e)
         {
-            message.setText(e.getMessage());
+            HummWindow.say(message, e.getMessage());
             return;
         }
         closeCard();
@@ -151,8 +151,8 @@ public class SongsPanel
 
     private JPanel makeRow(Playlist playlist, Song song)
     {
-        JButton delete = HummWindow.button("Delete", HummWindow.WHITE,
-            HummWindow.ALERT);
+        JButton delete = HummWindow.button("Delete", HummWindow.ALERT,
+            HummWindow.WHITE);
         delete.addActionListener(e -> {
             try
             {

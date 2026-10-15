@@ -109,8 +109,10 @@ public class HummWindow
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         deck.setPreferredSize(new Dimension(1280, 720));
         pack();
-        setMinimumSize(new Dimension(1000, 640));
+        // never smaller than this, so every word and button always fits
+        setMinimumSize(new Dimension(1100, 720));
         setLocationRelativeTo(null);
+        setExtendedState(MAXIMIZED_BOTH);
         showScreen(MAIN);
     }
 
@@ -280,15 +282,22 @@ public class HummWindow
      */
     static JButton button(String text, Color background, Color foreground)
     {
-        JButton button = new JButton(text);
-        button.setFont(body(14f, true));
-        button.setBackground(background);
-        button.setForeground(foreground);
-        button.setFocusPainted(false);
-        button.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        button.putClientProperty("JButton.buttonType", "roundRect");
-        button.putClientProperty("JComponent.minimumHeight", 44);
-        return button;
+        return new Pill(text, background, foreground);
+    }
+
+
+    /**
+     * Shows a message in a label, wrapped so none of it is cut off.
+     *
+     * @param label the label
+     * @param text the message
+     */
+    static void say(JLabel label, String text)
+    {
+        String safe = text.replace("&", "&amp;").replace("<", "&lt;")
+            .replace(">", "&gt;");
+        label.setText("<html><body style='width: 340px'>" + safe
+            + "</body></html>");
     }
 
 
@@ -545,7 +554,14 @@ public class HummWindow
     static JPanel formCard(String title, String[] names, JTextField[] fields,
         JLabel message, JButton cancel, JButton ok)
     {
-        Card card = new Card(LAVENDER, 20);
+        Card card = new Card(LAVENDER, 20)
+        {
+            @Override
+            public Dimension getPreferredSize()
+            {
+                return new Dimension(400, super.getPreferredSize().height);
+            }
+        };
         card.setLayout(new BoxLayout(card, BoxLayout.Y_AXIS));
         card.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
         JLabel heading = label(title, heading(16f, false), PURPLE);
@@ -571,8 +587,96 @@ public class HummWindow
         buttons.add(ok);
         buttons.setAlignmentX(JComponent.LEFT_ALIGNMENT);
         card.add(buttons);
-        card.setPreferredSize(new Dimension(400, card.getPreferredSize().height));
         return card;
+    }
+
+
+    /**
+     * A pill-shaped button that paints itself, so it looks the same with or
+     * without FlatLaf. A white button gets an outline in its text color; any
+     * other color is a solid fill. It always sizes itself to fit its words.
+     */
+    static class Pill
+        extends JButton
+    {
+        private static final int SIDE = 24;
+        private final Color fill;
+        private final Color ink;
+
+        /**
+         * Makes a pill.
+         *
+         * @param text what it says
+         * @param fill the fill color (white means outline only)
+         * @param ink the text color
+         */
+        Pill(String text, Color fill, Color ink)
+        {
+            super(text);
+            this.fill = fill;
+            this.ink = ink;
+            setFont(body(14f, true));
+            setForeground(ink);
+            setContentAreaFilled(false);
+            setBorderPainted(false);
+            setFocusPainted(false);
+            setOpaque(false);
+            setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        }
+
+
+        @Override
+        public Dimension getPreferredSize()
+        {
+            if (isPreferredSizeSet())
+            {
+                return super.getPreferredSize();
+            }
+            java.awt.FontMetrics fm = getFontMetrics(getFont());
+            return new Dimension(fm.stringWidth(getText()) + 2 * SIDE,
+                Math.max(44, fm.getHeight() + 20));
+        }
+
+
+        @Override
+        public Dimension getMinimumSize()
+        {
+            return getPreferredSize();
+        }
+
+
+        @Override
+        protected void paintComponent(Graphics g)
+        {
+            Graphics2D g2 = (Graphics2D) g.create();
+            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+                RenderingHints.VALUE_ANTIALIAS_ON);
+            if (!isEnabled())
+            {
+                g2.setComposite(java.awt.AlphaComposite.getInstance(
+                    java.awt.AlphaComposite.SRC_OVER, 0.4f));
+            }
+            int w = getWidth();
+            int h = getHeight();
+            g2.setColor(fill);
+            g2.fillRoundRect(0, 0, w, h, h, h);
+            if (WHITE.equals(fill))
+            {
+                g2.setColor(ink);
+                g2.setStroke(new java.awt.BasicStroke(2f));
+                g2.drawRoundRect(1, 1, w - 2, h - 2, h - 2, h - 2);
+            }
+            g2.dispose();
+            // the words, in this button's own color
+            Graphics2D text = (Graphics2D) g.create();
+            if (!isEnabled())
+            {
+                text.setComposite(java.awt.AlphaComposite.getInstance(
+                    java.awt.AlphaComposite.SRC_OVER, 0.4f));
+            }
+            super.paintComponent(text);
+            text.dispose();
+        }
     }
 
 
@@ -738,8 +842,9 @@ public class HummWindow
             if (bird != null)
             {
                 Dimension b = bird.getPreferredSize();
-                int x = birdOnLeft ? MARGIN : w - b.width - MARGIN;
-                int y = h - b.height - MARGIN;
+                // the bird sits right on the edge so its stem touches the bottom
+                int x = birdOnLeft ? 0 : w - b.width;
+                int y = h - b.height;
                 bird.setBounds(x, y, b.width, b.height);
                 Dimension c = card.getPreferredSize();
                 int cx = birdOnLeft ? 56 : w - c.width - 56;

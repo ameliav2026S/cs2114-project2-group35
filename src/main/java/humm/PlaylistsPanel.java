@@ -31,7 +31,7 @@ public class PlaylistsPanel
     private final JLabel notice =
         HummWindow.label(" ", HummWindow.body(13f, false), HummWindow.ALERT);
     private final JButton clearAll =
-        HummWindow.button("Clear all", HummWindow.WHITE, HummWindow.ALERT);
+        HummWindow.button("Clear all", HummWindow.ALERT, HummWindow.WHITE);
     private final JButton deleted = HummWindow.button("Deleted playlists",
         HummWindow.TURQUOISE, HummWindow.INK);
 
@@ -54,8 +54,8 @@ public class PlaylistsPanel
         headRow.add(head, BorderLayout.EAST);
         headRow.add(notice, BorderLayout.WEST);
 
-        JButton home = HummWindow.button("Home", HummWindow.WHITE,
-            HummWindow.PURPLE);
+        JButton home = HummWindow.button("Home", HummWindow.PURPLE,
+            HummWindow.WHITE);
         home.addActionListener(e -> window.showScreen(HummWindow.MAIN));
         clearAll.addActionListener(e -> {
             window.getLibrary().clearPlaylists();
@@ -82,7 +82,7 @@ public class PlaylistsPanel
         JPanel card = HummWindow.formCard("New playlist",
             new String[] {"Title", "Description"},
             new JTextField[] {titleField, descField}, message, cancel, create);
-        setBird(HummWindow.pictureButton("flower3.GIF",
+        setBird(HummWindow.pictureButton("flower4.GIF",
             "New playlist"), true, card);
     }
 
@@ -105,7 +105,7 @@ public class PlaylistsPanel
         }
         catch (IllegalArgumentException e)
         {
-            message.setText(e.getMessage());
+            HummWindow.say(message, e.getMessage());
             return;
         }
         closeCard();
@@ -139,8 +139,8 @@ public class PlaylistsPanel
             HummWindow.body(13f, false), HummWindow.MUTED);
         JButton open = HummWindow.button("Open", HummWindow.PURPLE,
             HummWindow.WHITE);
-        JButton delete = HummWindow.button("Delete", HummWindow.WHITE,
-            HummWindow.ALERT);
+        JButton delete = HummWindow.button("Delete", HummWindow.ALERT,
+            HummWindow.WHITE);
         open.addActionListener(e -> {
             window.setChosenPlaylist(playlist);
             window.showScreen(HummWindow.SONGS);
