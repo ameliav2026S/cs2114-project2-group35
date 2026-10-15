@@ -667,6 +667,15 @@ public class HummWindow
         {
             return getPreferredSize();
         }
+
+
+        @Override
+        public Dimension getMaximumSize()
+        {
+            // without this, a box layout squeezes the label back down to the
+            // bare measured width and the spare room is lost
+            return getPreferredSize();
+        }
     }
 
 
