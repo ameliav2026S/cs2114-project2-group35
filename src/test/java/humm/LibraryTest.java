@@ -12,18 +12,17 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 /**
- * Tests for Library: one normal case and bad-input cases per method,
- * following section 8 of the Humm spec.
- *
+ * This class tests the Library class with one normal case and bad-input cases per method.
+ * 
  * @author Tanvi Bhat
- * @version October 2026
+ * @version October 15, 2026
  */
 public class LibraryTest
 {
     private Library library;
 
     /**
-     * Makes an empty Library before each test.
+     * This method sets up an empty object called Library.
      */
     @BeforeEach
     public void setUp()
@@ -32,17 +31,17 @@ public class LibraryTest
     }
 
     /**
-     * Checks whether an iterator visits this exact playlist.
+     * This method checks whether an iterator visits the playlist.
      *
-     * @param it       the iterator
+     * @param iterator the iterator
      * @param playlist the playlist to look for
      * @return true if that exact object was visited
      */
-    private boolean visits(Iterator<Playlist> it, Playlist playlist)
+    private boolean visits(Iterator<Playlist> iterator, Playlist playlist)
     {
-        while (it.hasNext())
+        while (iterator.hasNext())
         {
-            if (it.next() == playlist)
+            if (iterator.next() == playlist)
             {
                 return true;
             }
@@ -51,26 +50,25 @@ public class LibraryTest
     }
 
     /**
-     * Counts how many items an iterator visits.
+     * This method counts how many items an iterator visits.
      *
-     * @param it the iterator
+     * @param iterator the iterator
      * @return the number of items visited
      */
-    private int countItems(Iterator<Playlist> it)
+    private int countItems(Iterator<Playlist> iterator)
     {
         int count = 0;
-        while (it.hasNext())
+        while (iterator.hasNext())
         {
-            it.next();
+            iterator.next();
             count++;
         }
         return count;
     }
 
-    // ----- constructor -----
 
     /**
-     * A new Library has no playlists and nothing deleted.
+     * This method tests the constructor by checking if it has no playlists and nothing deleted.
      */
     @Test
     public void testConstructor()
@@ -81,10 +79,9 @@ public class LibraryTest
         assertFalse(library.deletedPlaylists().hasNext());
     }
 
-    // ----- createPlaylist -----
 
     /**
-     * Valid text adds one playlist and returns it.
+     * This method tests that text adds one playlist and returns it.
      */
     @Test
     public void testCreatePlaylist()
@@ -96,7 +93,8 @@ public class LibraryTest
     }
 
     /**
-     * A blank title throws, and the count doesn't change.
+     * This method tests if creating a playlist with a blank title throws an IllegalArgumentException 
+     * This doesn't add anything to the library.
      */
     @Test
     public void testCreatePlaylistBlankTitle()
@@ -107,7 +105,7 @@ public class LibraryTest
     }
 
     /**
-     * Text over 80 characters throws, and the count doesn't change.
+     * This tests if the title over 80 characters, if so, it throws an exception.
      */
     @Test
     public void testCreatePlaylistTooLong()
@@ -117,11 +115,9 @@ public class LibraryTest
         assertEquals(0, library.playlistCount());
     }
 
-    // ----- deletePlaylist -----
 
     /**
-     * Deleting a playlist with 3 songs moves it, songs and all, to
-     * Recently Deleted.
+     * This tests deleting a playlist with 3 songs and moves it to recently deleted.
      */
     @Test
     public void testDeletePlaylist()
@@ -139,7 +135,7 @@ public class LibraryTest
     }
 
     /**
-     * Two playlists with the same title: deleting one leaves the other.
+     * This method tests if two playlists with the same title.
      */
     @Test
     public void testDeletePlaylistSameTitle()
@@ -153,7 +149,7 @@ public class LibraryTest
     }
 
     /**
-     * Deleting a playlist never created in this Library throws.
+     * This method tests deleting a playlist never created in the Library, if so, it throws an exception.
      */
     @Test
     public void testDeletePlaylistNotInLibrary()
@@ -167,7 +163,7 @@ public class LibraryTest
     }
 
     /**
-     * Deleting the same playlist twice throws the second time.
+     * This method tests if deleting the same playlist twice throws and exception the second time.
      */
     @Test
     public void testDeletePlaylistTwice()
@@ -179,10 +175,9 @@ public class LibraryTest
         assertEquals(1, library.deletedPlaylistCount());
     }
 
-    // ----- restorePlaylist -----
 
     /**
-     * Restoring brings the playlist back with its songs and its own
+     * This method tests if restoring a playlist brings the playlist back with its songs and its own
      * deleted songs.
      */
     @Test
@@ -206,7 +201,7 @@ public class LibraryTest
     }
 
     /**
-     * Restoring a playlist that isn't deleted throws.
+     * This method tests if restoring a playlist that isn't deleted throws.
      */
     @Test
     public void testRestorePlaylistNotDeleted()
@@ -218,10 +213,9 @@ public class LibraryTest
         assertEquals(0, library.deletedPlaylistCount());
     }
 
-    // ----- clearPlaylists -----
 
     /**
-     * Clearing 2 playlists moves both to Recently Deleted.
+     * This method tests if clearing 2 playlists moves both to Recently Deleted.
      */
     @Test
     public void testClearPlaylists()
@@ -236,7 +230,7 @@ public class LibraryTest
     }
 
     /**
-     * Clearing with no playlists does nothing and doesn't throw.
+     * This method tests if clearing with no playlists does nothing and doesn't throw an exception.
      */
     @Test
     public void testClearPlaylistsEmpty()
@@ -246,10 +240,9 @@ public class LibraryTest
         assertEquals(0, library.deletedPlaylistCount());
     }
 
-    // ----- emptyDeletedPlaylists -----
 
     /**
-     * Emptying Recently Deleted removes those playlists for good.
+     * This method tests if emptying Recently Deleted removes those playlists for good.
      */
     @Test
     public void testEmptyDeletedPlaylists()
@@ -264,7 +257,7 @@ public class LibraryTest
     }
 
     /**
-     * Emptying an already empty Recently Deleted doesn't throw.
+     * This method tests if emptying an already empty Recently Deleted and doesn't throw an exception.
      */
     @Test
     public void testEmptyDeletedPlaylistsEmpty()
@@ -273,10 +266,9 @@ public class LibraryTest
         assertEquals(0, library.deletedPlaylistCount());
     }
 
-    // ----- iterators -----
 
     /**
-     * The playlists iterator visits each playlist once.
+     * This method tests if the playlists iterator visits each playlist once.
      */
     @Test
     public void testPlaylistsIterator()
@@ -288,7 +280,7 @@ public class LibraryTest
     }
 
     /**
-     * next() past the end of an empty iterator throws.
+     * This method tests if next() passes the end of an empty iterator and throws an exception.
      */
     @Test
     public void testIteratorPastEnd()

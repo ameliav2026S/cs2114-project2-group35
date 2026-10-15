@@ -1,17 +1,22 @@
 package humm;
-
 import java.util.Iterator;
 
 /**
- * The app's logic: every playlist, plus the deleted playlists in
- * Recently Deleted. Library has no Swing in it, so it can be tested on
- * its own.
+ * This class holds the apps logic for the playlists.
+ * It stores the two LinkedChain<Playlist> chains: one for active playlist and the other for recently deleted playlist.
  *
- * A deleted playlist keeps its songs and its own deleted songs, so
- * restoring it brings everything back at once.
- *
+ * What it does:
+ * Creates playlists with a title and description
+ * Deletes a playlist by moving it to the Recently Deleted
+ * Clears all the playlists there are and moves it to the Recently Deleted at once
+ * Empties the Recently Deleted for good
+ * Gives the screens iterators and counts so they can draw rows
+ * 
+ * Library calls LinkedChains to be tested on its own. Library doesn't have Swing code. 
+ * Logic: Screens -> Library -> LinkedChain 
+ * 
  * @author Tanvi Bhat
- * @version October 2026
+ * @version October 15, 2026
  */
 public class Library
 {
@@ -19,7 +24,7 @@ public class Library
     private final LinkedChain<Playlist> deletedPlaylists;
 
     /**
-     * Makes a Library with both chains empty.
+     * Creates a Library with both chains empty.
      */
     public Library()
     {
@@ -28,10 +33,10 @@ public class Library
     }
 
     /**
-     * Makes a playlist (which checks its own text), adds it to the
+     * Creates a playlist (which checks its own text), adds it to the
      * Library, and returns it.
      *
-     * @param title       the playlist's title
+     * @param title the playlist's title
      * @param description the playlist's description
      * @return the new playlist
      * @throws IllegalArgumentException if the title or description is bad
@@ -44,11 +49,10 @@ public class Library
     }
 
     /**
-     * Moves that exact playlist into Recently Deleted. Its songs go
-     * with it.
+     * This method moves the playlist along with the songs inside of it into Recently Deleted.
      *
-     * @param playlist the playlist to delete
-     * @throws java.util.NoSuchElementException if the playlist is not in
+     * @param playlist to delete
+     * @throws java.util.NoSuchElementException throws if the playlist is not in
      *         the Library
      */
     public void deletePlaylist(Playlist playlist)
@@ -58,11 +62,10 @@ public class Library
     }
 
     /**
-     * Moves that exact playlist back out of Recently Deleted, with all of
-     * its songs and its own deleted songs.
+     * This method moves the playlist along with its songs out of Recently Deleted.
      *
      * @param playlist the playlist to restore
-     * @throws java.util.NoSuchElementException if the playlist is not in
+     * @throws java.util.NoSuchElementException throws if the playlist is not in
      *         Recently Deleted
      */
     public void restorePlaylist(Playlist playlist)
@@ -72,8 +75,8 @@ public class Library
     }
 
     /**
-     * Moves every playlist into Recently Deleted, then empties the active
-     * chain. Safe when there are no playlists.
+     * This method moves all playlists into Recently Deleted, then empties the active
+     * chain.
      */
     public void clearPlaylists()
     {
@@ -85,7 +88,7 @@ public class Library
     }
 
     /**
-     * Empties Recently Deleted for good. Safe when it is already empty.
+     * This method empties the Recently Deleted for good.
      */
     public void emptyDeletedPlaylists()
     {
@@ -93,10 +96,9 @@ public class Library
     }
 
     /**
-     * Loops over the active playlists, for drawing rows. Order is not
-     * promised.
-     *
-     * @return an iterator over the playlists
+     * This method loops over the active playlists to draw rows.
+     * This helps the iterator step through a playlist one at a time so other classes can look at each playlist without touching the chain.
+     * @return iterator over the playlists
      */
     public Iterator<Playlist> playlists()
     {
@@ -104,10 +106,10 @@ public class Library
     }
 
     /**
-     * Loops over the deleted playlists, for drawing rows. Order is not
-     * promised.
-     *
-     * @return an iterator over the deleted playlists
+     * This method loops over the deleted playlists to draw rows. 
+     * This helps the iterator step through a playlist one at a time so other classes can look at each deleted playlist without touching the chain.
+
+     * @return iterator over the deleted playlists
      */
     public Iterator<Playlist> deletedPlaylists()
     {
@@ -115,9 +117,9 @@ public class Library
     }
 
     /**
-     * Gets how many playlists are active.
+     * This method gets how many playlists are active.
      *
-     * @return the number of active playlists
+     * @return number of active playlists
      */
     public int playlistCount()
     {
@@ -125,9 +127,9 @@ public class Library
     }
 
     /**
-     * Gets how many playlists are in Recently Deleted.
+     * This method gets how many playlists are in Recently Deleted.
      *
-     * @return the number of deleted playlists
+     * @return number of deleted playlists
      */
     public int deletedPlaylistCount()
     {

@@ -12,8 +12,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 /**
- * Tests for Playlist: one normal case and bad-input cases per method,
- * following section 8 of the Humm spec.
+ * This class tests the Playlist class with one normal case and bad-input
+ * cases per method.
  *
  * @author Tanvi Bhat
  * @version October 2026
@@ -26,7 +26,8 @@ public class PlaylistTest
     private Song levitating;
 
     /**
-     * Makes an empty playlist and three songs before each test.
+     * This method sets up an empty playlist and three songs before each
+     * test.
      */
     @BeforeEach
     public void setUp()
@@ -38,34 +39,35 @@ public class PlaylistTest
     }
 
     /**
-     * Counts how many items an iterator visits.
+     * This method counts how many songs an iterator visits.
      *
-     * @param it the iterator
-     * @return the number of items visited
+     * @param iterator the iterator
+     * @return the number of songs visited
      */
-    private int countItems(Iterator<Song> it)
+    private int countItems(Iterator<Song> iterator)
     {
         int count = 0;
-        while (it.hasNext())
+        while (iterator.hasNext())
         {
-            it.next();
+            iterator.next();
             count++;
         }
         return count;
     }
 
     /**
-     * Checks whether an iterator visits a song equal to the given one.
+     * This method checks whether an iterator visits a song equal to the
+     * given one.
      *
-     * @param it   the iterator
+     * @param iterator the iterator
      * @param song the song to look for
-     * @return true if it was found
+     * @return true if the song was found
      */
-    private boolean visits(Iterator<Song> it, Song song)
+    private boolean visits(Iterator<Song> iterator, Song song)
     {
-        while (it.hasNext())
+        while (iterator.hasNext())
         {
-            if (it.next().equals(song))
+            if (iterator.next().equals(song))
             {
                 return true;
             }
@@ -73,11 +75,10 @@ public class PlaylistTest
         return false;
     }
 
-    // ----- constructor -----
 
     /**
-     * Valid title and description are stored, and both chains start
-     * empty.
+     * This method tests the constructor by checking that the title and
+     * description are stored and both chains start empty.
      */
     @Test
     public void testConstructorValid()
@@ -89,7 +90,8 @@ public class PlaylistTest
     }
 
     /**
-     * A blank title is rejected with a helpful message.
+     * This method tests if a blank title throws an
+     * IllegalArgumentException with a helpful message.
      */
     @Test
     public void testConstructorBlankTitle()
@@ -101,7 +103,8 @@ public class PlaylistTest
     }
 
     /**
-     * A blank description is rejected with a helpful message.
+     * This method tests if a missing description throws an
+     * IllegalArgumentException with a helpful message.
      */
     @Test
     public void testConstructorBlankDescription()
@@ -113,7 +116,7 @@ public class PlaylistTest
     }
 
     /**
-     * A title over 80 characters is rejected.
+     * This method tests if a title over 80 characters throws an exception.
      */
     @Test
     public void testConstructorTooLong()
@@ -123,7 +126,7 @@ public class PlaylistTest
     }
 
     /**
-     * A pasted tab or line break is rejected.
+     * This method tests if a pasted tab or line break throws an exception.
      */
     @Test
     public void testConstructorTabOrLineBreak()
@@ -134,10 +137,9 @@ public class PlaylistTest
             () -> new Playlist("Getting Ready", "Line\nbreak"));
     }
 
-    // ----- addSong -----
 
     /**
-     * Adding two songs gives a count of 2.
+     * This method tests if adding two songs gives a count of 2.
      */
     @Test
     public void testAddSong()
@@ -150,7 +152,7 @@ public class PlaylistTest
     }
 
     /**
-     * The same song can be added twice.
+     * This method tests if the same song can be added twice.
      */
     @Test
     public void testAddSongDuplicate()
@@ -161,7 +163,8 @@ public class PlaylistTest
     }
 
     /**
-     * Adding null throws and changes nothing.
+     * This method tests if adding null throws an exception and doesn't
+     * change anything.
      */
     @Test
     public void testAddSongNull()
@@ -172,10 +175,9 @@ public class PlaylistTest
         assertEquals(1, playlist.songCount());
     }
 
-    // ----- deleteSong -----
-
     /**
-     * Deleting one of two songs moves it to Recently Deleted.
+     * This method tests if deleting one of two songs moves it to Recently
+     * Deleted.
      */
     @Test
     public void testDeleteSong()
@@ -190,7 +192,8 @@ public class PlaylistTest
     }
 
     /**
-     * A song typed with different capitals still finds the match.
+     * This method tests if a song typed with different capitals still
+     * finds the match and gets deleted.
      */
     @Test
     public void testDeleteSongTypedDifferently()
@@ -202,7 +205,8 @@ public class PlaylistTest
     }
 
     /**
-     * With two equal songs, deleting removes only one.
+     * This method tests if deleting a song with two copies only removes
+     * one of them.
      */
     @Test
     public void testDeleteSongDuplicateRemovesOne()
@@ -215,7 +219,8 @@ public class PlaylistTest
     }
 
     /**
-     * Deleting a song not in the playlist throws, and counts don't change.
+     * This method tests if deleting a song not in the playlist throws an
+     * exception and doesn't change the counts.     
      */
     @Test
     public void testDeleteSongMissing()
@@ -228,7 +233,8 @@ public class PlaylistTest
     }
 
     /**
-     * Deleting from an empty playlist throws.
+     * This method tests if deleting from an empty playlist throws an
+     * exception.
      */
     @Test
     public void testDeleteSongEmpty()
@@ -238,10 +244,10 @@ public class PlaylistTest
         assertEquals(0, playlist.deletedCount());
     }
 
-    // ----- restoreSong -----
 
     /**
-     * Restoring a deleted song puts it back in songs.
+     * This method tests if restoring a deleted song puts it back in the
+     * playlist.
      */
     @Test
     public void testRestoreSong()
@@ -255,7 +261,8 @@ public class PlaylistTest
     }
 
     /**
-     * Restoring a song that isn't deleted throws, and counts don't change.
+     * This method tests if restoring a song that isn't deleted throws an
+     * exception and doesn't change the counts.     
      */
     @Test
     public void testRestoreSongNotDeleted()
@@ -267,10 +274,10 @@ public class PlaylistTest
         assertEquals(0, playlist.deletedCount());
     }
 
-    // ----- clearSongs -----
 
     /**
-     * Clearing 3 songs moves all of them to Recently Deleted.
+     * This method tests if clearing 3 songs moves all of them to Recently
+     * Deleted.
      */
     @Test
     public void testClearSongs()
@@ -285,7 +292,8 @@ public class PlaylistTest
     }
 
     /**
-     * Clearing an empty playlist does nothing and doesn't throw.
+     * This method tests if clearing an empty playlist does nothing and
+     * doesn't throw an exception.
      */
     @Test
     public void testClearSongsEmpty()
@@ -295,10 +303,10 @@ public class PlaylistTest
         assertEquals(0, playlist.deletedCount());
     }
 
-    // ----- emptyDeletedSongs -----
 
     /**
-     * Emptying Recently Deleted removes those songs for good.
+     * This method tests if emptying Recently Deleted removes those songs
+     * for good.     
      */
     @Test
     public void testEmptyDeletedSongs()
@@ -313,7 +321,8 @@ public class PlaylistTest
     }
 
     /**
-     * Emptying an already empty Recently Deleted doesn't throw.
+     * This method tests if emptying an already empty Recently Deleted
+     * doesn't throw an exception.
      */
     @Test
     public void testEmptyDeletedSongsEmpty()
@@ -322,10 +331,10 @@ public class PlaylistTest
         assertEquals(0, playlist.deletedCount());
     }
 
-    // ----- restoreAllSongs (stretch) -----
 
     /**
-     * Restore all moves every deleted song back.
+     * This method tests if restoring all moves every deleted song back
+     * into the playlist (stretch goal).
      */
     @Test
     public void testRestoreAllSongs()
@@ -339,8 +348,9 @@ public class PlaylistTest
     }
 
     /**
-     * Restore all with nothing deleted does nothing and doesn't throw.
-     */
+    * This method tests if restoring all with nothing deleted does nothing
+    * and doesn't throw an exception.     
+    */
     @Test
     public void testRestoreAllSongsEmpty()
     {
@@ -350,10 +360,9 @@ public class PlaylistTest
         assertEquals(0, playlist.deletedCount());
     }
 
-    // ----- iterators -----
 
     /**
-     * The songs iterator visits each song once.
+     * This method tests if the songs iterator visits each song once.
      */
     @Test
     public void testSongsIterator()
@@ -365,8 +374,8 @@ public class PlaylistTest
     }
 
     /**
-     * Iterators over empty chains visit nothing, and next() past the end
-     * throws.
+     * This method tests if iterators over empty chains visit nothing, and
+     * if calling next() past the end throws an exception.
      */
     @Test
     public void testIteratorsEmpty()
@@ -377,11 +386,9 @@ public class PlaylistTest
         assertThrows(NoSuchElementException.class, () -> deleted.next());
     }
 
-    // ----- equality -----
-
     /**
-     * Playlists use identity: two playlists with the same title and
-     * description are not equal.
+     * This method tests if two playlists with the same title and
+     * description are not equal, since playlists are compared by identity.
      */
     @Test
     public void testPlaylistEqualityIsIdentity()

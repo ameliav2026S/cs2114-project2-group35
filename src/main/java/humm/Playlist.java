@@ -3,16 +3,27 @@ package humm;
 import java.util.Iterator;
 
 /**
- * One playlist in Humm: a title, a description, and two chains of songs.
- * The songs chain holds what is in the playlist now; the deletedSongs
- * chain is this playlist's Recently Deleted.
+ * This class holds the logic for one playlist. 
+ *  It stores the two LinkedChain<Song> chains: 
+ * One for the songs in the playlist and the other for the ones that are recently deleted.
+ * 
+ * What it does:
+ * Checks its own title and description when it is created
+ * Adds songs (duplicates are allowed)
+ * Deletes a song by moving it into Recently Deleted
+ * Restores a deleted song back into the playlist
+ * Clears all songs into Recently Deleted at once
+ * Empties Recently Deleted for good
+ * Lets other classes loop over the songs and get counts, without
+ * touching the LinkedChain directly
  *
- * Playlist does NOT override equals(), on purpose. Two playlists are
- * equal only if they are the same object, so deleting one playlist never
- * removes a different playlist that happens to have the same title.
- *
+ * Playlist does not override equals() on purpose. Two playlists are only
+ * equal if they are the same object, so deleting one playlist never
+ * deletes a different playlist with the same title.
+ * Logic: Library -> Playlist -> LinkedChain
+ * 
  * @author Tanvi Bhat
- * @version October 2026
+ * @version October 15, 2026
  */
 public class Playlist
 {
@@ -25,12 +36,13 @@ public class Playlist
     private final LinkedChain<Song> deletedSongs;
 
     /**
-     * Makes a playlist with two empty chains after checking its fields.
+     * Creates a playlist with both chains empty, after checking its title
+     * and description.
      *
-     * @param title       the playlist's title
+     * @param title the playlist's title
      * @param description the playlist's description
      * @throws IllegalArgumentException if either field is blank, longer
-     *         than 80 characters, or contains a tab or line break
+     * than 80 characters, or has a tab or line break
      */
     public Playlist(String title, String description)
     {
@@ -41,7 +53,7 @@ public class Playlist
     }
 
     /**
-     * Gets the title.
+     * This metho gets the playlist's title.
      *
      * @return the cleaned title
      */
@@ -51,7 +63,7 @@ public class Playlist
     }
 
     /**
-     * Gets the description.
+     * This metod gets the playlist's description.
      *
      * @return the cleaned description
      */
@@ -61,10 +73,10 @@ public class Playlist
     }
 
     /**
-     * Adds a song to this playlist. Duplicates are allowed.
+     * This method adds a song to this playlist. The same song can be added more than once.
      *
      * @param song the song to add
-     * @throws IllegalArgumentException if song is null
+     * @throws IllegalArgumentException if the song is null
      */
     public void addSong(Song song)
     {
@@ -76,7 +88,7 @@ public class Playlist
     }
 
     /**
-     * Moves one matching song from songs into deletedSongs.
+     * This method moves one matching song from songs into the deletedSongs
      *
      * @param song the song to delete
      * @throws java.util.NoSuchElementException if no matching song is in
@@ -89,7 +101,7 @@ public class Playlist
     }
 
     /**
-     * Moves one matching song from deletedSongs back into songs.
+     * This method moves one matching song out of deletedSongs and back into the playlist.
      *
      * @param song the song to restore
      * @throws java.util.NoSuchElementException if no matching song is in
@@ -102,8 +114,7 @@ public class Playlist
     }
 
     /**
-     * Moves every song into deletedSongs, then empties songs.
-     * Safe on an empty playlist.
+     * This method moves all songs into deletedSongs, then empties the song chain.
      */
     public void clearSongs()
     {
@@ -115,7 +126,7 @@ public class Playlist
     }
 
     /**
-     * Empties Recently Deleted for good. Safe when it is already empty.
+     * This method empties the Recently Deleted for good.
      */
     public void emptyDeletedSongs()
     {
@@ -123,8 +134,8 @@ public class Playlist
     }
 
     /**
-     * Stretch goal: moves every deleted song back into songs, then
-     * empties Recently Deleted. Safe when it is already empty.
+     * This method (stretch goal) moves all the songs in Recently Deleted
+     * back into the playlist, then empties Recently Deleted.
      */
     public void restoreAllSongs()
     {
@@ -136,8 +147,9 @@ public class Playlist
     }
 
     /**
-     * Loops over the songs currently in the playlist, for drawing rows.
-     * Order is not promised.
+     * This method returns an iterator that steps through the songs in the
+     * playlist one at a time, so other classes can look at each song
+     * without touching the chain.
      *
      * @return an iterator over the songs
      */
@@ -147,8 +159,9 @@ public class Playlist
     }
 
     /**
-     * Loops over this playlist's Recently Deleted songs, for drawing rows.
-     * Order is not promised.
+     * This method returns an iterator that steps through the deleted songs
+     * one at a time, so other classes can look at each deleted song
+     * without touching the chain.
      *
      * @return an iterator over the deleted songs
      */
@@ -158,7 +171,7 @@ public class Playlist
     }
 
     /**
-     * Gets how many songs are in the playlist.
+     * This method gets how many songs are in the playlist.
      *
      * @return the number of songs
      */
@@ -168,7 +181,7 @@ public class Playlist
     }
 
     /**
-     * Gets how many songs are in Recently Deleted.
+     * This method gets how many songs are in Recently Deleted.
      *
      * @return the number of deleted songs
      */
@@ -178,12 +191,14 @@ public class Playlist
     }
 
     /**
-     * Checks and cleans one typed field.
+     * This method checks and cleans one typed field. It trims the outside
+     * spaces and shrinks extra spaces in the middle down to one.
      *
-     * @param text      what the user typed
+     * @param text what the user typed
      * @param fieldName the field's name, used in the error message
-     * @return the trimmed text, with runs of spaces shrunk to one space
-     * @throws IllegalArgumentException with a message saying what to fix
+     * @return the cleaned text
+     * @throws IllegalArgumentException throws with a message saying what
+     * to fix if the text is blank, too long, or has a tab or line break
      */
     private static String clean(String text, String fieldName)
     {
