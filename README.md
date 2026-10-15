@@ -71,7 +71,7 @@ Head-only `add`, the size counter, the null check on `add`, `contains`, `count`,
 - `Song` says "Please enter a artist." for a blank artist instead of "an artist."
 - `Song`'s messages don't match the exact wording in our spec (see the table above).
 - There is no Restore all button on either deleted screen yet. `Playlist.restoreAllSongs()` works, and `Library.restoreAllPlaylists()` is not written yet.
-- All tests passed at our last run. [Add anything else that comes up in the by-hand GUI checklist.]
+- All tests passed at our last run. 
 
 ## Next Steps
 
@@ -107,16 +107,16 @@ Head-only `add`, the size counter, the null check on `add`, `contains`, `count`,
 
 | File | Team member(s) | How |
 |---|---|---|
-| `LinkedChain.java` | Preston | [How] |
-| `LinkedChainTest.java` | Preston | [How] |
-| `Song.java` | Preston | [How] |
-| `SongTest.java` | Preston | [How] |
-| `Playlist.java` | Tanvi | [How] |
-| `PlaylistTest.java` | Tanvi | [How] |
-| `Library.java` | Tanvi | [How] |
-| `LibraryTest.java` | Tanvi | [How] |
-| `HummWindow.java` and the five panels | Amelia | Designed the screens, picked the fonts, made the GIFs, and chose the layout by hand. The Java code was generally built with AI, working from those designs. Amelia tested it, ran it, and decided what to change |
+| `LinkedChain.java` | Preston | Added an iterator, made remove throw, removed the order-based methods.|
+| `LinkedChainTest.java` | Preston | Wrote code then, asked GenAI to check and fix errors, then re-draft, reviewed, rewrote the comments, and ran it. |
+| `Song.java` | Preston | Wrote code then, asked GenAI to check and fix errors, then re-draft, reviewed, rewrote the comments, and ran it. |
+| `SongTest.java` | Preston | Wrote code then, asked GenAI to check and fix errors, then re-draft, reviewed, rewrote the comments, and ran it. |
+| `Playlist.java` | Tanvi |Wrote code then, asked GenAI to check and fix errors, then re-draft, reviewed, rewrote the comments, and ran it. |
+| `PlaylistTest.java` | Tanvi | Wrote code then, asked GenAI to check and fix errors, then re-draft, reviewed, rewrote the comments, and ran it. |
+| `Library.java` | Tanvi | Wrote code then, asked GenAI to check and fix errors, then re-draft, reviewed, rewrote the comments, and ran it. |
+| `LibraryTest.java` | Tanvi | Wrote code then, asked GenAI to check and fix errors, then re-draft, reviewed, rewrote the comments, and ran it. |
+| `HummWindow.java` and the five panels | Amelia | Designed the screens, picked the fonts, made the GIFs, and chose the layout by hand. The Java code was generally built with AI, working from those designs. Amelia tested it, ran it, and decided what to change. |
 | `pom.xml` / Maven setup | Amelia | Set up the files in their respective folders and sections to ensure everyone could find what they needed, and provided instructions. |
 | `README.md` | Everyone | Tanvi set up and filled it out, Amelia revised it and added her contributions within the project, and Preston added his contributions to the project. |
 
-**How we used GenAI:** Our team used GenAI tools while building Humm, and the tool and the way each of us used it varied. The code was generally built with AI help. Amelia's own work was the designs, fonts, GIFs, layout choices, testing, and decisions about what to keep or change with respect to the GUI, as well as overall reviewing all of the files. [Tanvi and Preston: add which tool you used and for which files.]
+**How we used GenAI:** Our team used GenAI tools while building Humm, and the tool and the way each of us used it varied. The code was generally built with AI help. Amelia's own work was the designs, fonts, GIFs, layout choices, testing, and decisions about what to keep or change with respect to the GUI, as well as overall reviewing all of the files. Both Tanvi and Preston asked GenAI to review their first rought code drafts and improve it, once they did that, they re wrote comments to understand what GenAI provided and fixed any bugs and wrote tests on their own.
