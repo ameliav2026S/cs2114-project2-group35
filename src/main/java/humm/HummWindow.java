@@ -58,7 +58,7 @@ public class HummWindow
 
     // ---- colors ----
 
-    static final Color PURPLE = new Color(0x5B2A9E);
+    static final Color PURPLE = new Color(0x8355E2);
     static final Color INK = new Color(0x1E1033);
     static final Color MUTED = new Color(0x5D4F7C);
     static final Color LAVENDER = new Color(0xF1ECFF);
@@ -265,27 +265,22 @@ public class HummWindow
      */
     static JLabel label(String text, Font font, Color color)
     {
-        JLabel label = new JLabel(text);
+        JLabel label = new Word(text);
         label.setFont(font);
         label.setForeground(color);
-        // a little spare room so the last letter is never swapped for "..."
-        label.setBorder(BorderFactory.createEmptyBorder(0, 0, 0,
-            Math.round(font.getSize2D() * 0.4f)));
         return label;
     }
 
 
     /**
-     * Makes a label sit in the middle with spare room on both sides, so its
-     * words are never cut short.
+     * Makes a label sit in the middle of whatever room it has.
      *
      * @param label the label
      * @return the same label
      */
     static JLabel centered(JLabel label)
     {
-        int pad = Math.round(label.getFont().getSize2D() * 0.2f);
-        label.setBorder(BorderFactory.createEmptyBorder(0, pad, 0, pad));
+        label.setHorizontalAlignment(SwingConstants.CENTER);
         return label;
     }
 
@@ -417,9 +412,7 @@ public class HummWindow
         heading.setLayout(new BoxLayout(heading, BoxLayout.Y_AXIS));
         if (onRight)
         {
-            // spare room goes on the left so the words still end at the bar
-            int pad = Math.round(title.getFont().getSize2D() * 0.4f);
-            title.setBorder(BorderFactory.createEmptyBorder(0, pad, 0, 0));
+            // the spare room ends up on the left, so words still end at the bar
             title.setHorizontalAlignment(SwingConstants.RIGHT);
         }
         title.setAlignmentX(side);
@@ -620,6 +613,42 @@ public class HummWindow
 
 
     /**
+     * A label that always asks for a little more room than its words need.
+     * Swing sometimes measures text a few pixels short, and then swaps the
+     * last letter for "..."; the spare room keeps that from happening.
+     */
+    static class Word
+        extends JLabel
+    {
+        /**
+         * Makes a label.
+         *
+         * @param text what it says
+         */
+        Word(String text)
+        {
+            super(text);
+        }
+
+
+        @Override
+        public Dimension getPreferredSize()
+        {
+            Dimension d = super.getPreferredSize();
+            return new Dimension(d.width + Math.round(getFont().getSize2D()
+                * 0.5f), d.height);
+        }
+
+
+        @Override
+        public Dimension getMinimumSize()
+        {
+            return getPreferredSize();
+        }
+    }
+
+
+    /**
      * A pill-shaped button that paints itself, so it looks the same with or
      * without FlatLaf. A white button gets an outline in its text color; any
      * other color is a solid fill. It always sizes itself to fit its words.
@@ -645,6 +674,8 @@ public class HummWindow
             this.ink = ink;
             setFont(body(14f, true));
             setForeground(ink);
+            setBorder(BorderFactory.createEmptyBorder());
+            setMargin(new java.awt.Insets(0, 0, 0, 0));
             setContentAreaFilled(false);
             setBorderPainted(false);
             setFocusPainted(false);
