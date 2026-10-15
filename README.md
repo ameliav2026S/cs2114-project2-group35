@@ -1,4 +1,3 @@
-# cs2114-project2-group35
 # Humm 🎧
 
 **CS 2114 · Project 2 · Group 35**
@@ -29,11 +28,13 @@ User → HummWindow (5 screens) → Library → Playlist → LinkedChain<T>
 **Requirements:** Java 17 or newer and Maven. In VS Code, install the Extension Pack for Java.
 
 - **Tests:** run `mvn test`, or open the **Testing** panel (flask icon) in VS Code and click run all.
-- **App:** open `HummWindow.java` and click **Run** above `main`.
+- **App:** run `mvn exec:java` from the project folder (we will package it into a runnable file later). You can also open `HummWindow.java` and click **Run** above `main`.
 
 ```
-src/main/java/humm/   LinkedChain, Song, Playlist, Library, HummWindow + panels
-src/test/java/humm/   LinkedChainTest, SongTest, PlaylistTest, LibraryTest
+src/main/java/humm/        LinkedChain, Song, Playlist, Library, HummWindow + panels
+src/main/resources/fonts/  Comfortaa and Unbounded (the app's two fonts)
+src/main/resources/images/ the hummingbird GIFs (if one is missing, a plain button stands in)
+src/test/java/humm/        LinkedChainTest, SongTest, PlaylistTest, LibraryTest
 ```
 
 ## Reflection
@@ -48,7 +49,8 @@ src/test/java/humm/   LinkedChainTest, SongTest, PlaylistTest, LibraryTest
 | Test plan | Song bad-input tests check the error messages | `SongTest` only checks the exact message for a blank title; other cases check that an exception is thrown | Song's messages changed (see above), so we test behavior instead of exact wording |
 | Classes and method signatures | Section 6 of the spec | No changes: `Playlist` and `Library` match their spec signatures exactly | |
 | Where validation lives | Song and Playlist constructors | No change | |
-| [GUI changes, e.g. how screens scroll or switch] | | | [Amelia] |
+| GUI layout | The spec described the five screens | Five panels in one window, switched with a `CardLayout`. The add-a-song and new-playlist forms are pop-up cards that open from a hummingbird button, instead of fields that are always showing | Keeps the lists the main thing on screen. [Amelia: confirm against the spec] |
+| Restore all (screens) | A Restore all button on the deleted screens | `Playlist.restoreAllSongs()` is built and tested, but neither deleted screen has a Restore all button yet | Not finished (see Next Steps) |
 
 ### What changed in the LinkedChain?
 
@@ -62,13 +64,14 @@ Head-only `add`, the size counter, the null check on `add`, `contains`, `count`,
 ### What happened to our unknowns?
 
 - **How to make sure duplicate playlists aren't removed by mistake: figured out.** `Playlist` doesn't override `equals()`, so `remove` only matches the exact object. `LibraryTest.testDeletePlaylistSameTitle` proves deleting one "Getting Ready" playlist leaves the other.
-- **How to code scrolling frames for the GUI: [figured out / still open].** [Amelia: e.g. each list is inside a JScrollPane]
+- **How to code scrolling frames for the GUI: figured out.** Each list is a column of row panels inside a `JScrollPane`, so the frame stays the same size however many playlists or songs there are.
 
 ### What doesn't work yet?
 
 - `Song` says "Please enter a artist." for a blank artist instead of "an artist."
 - `Song`'s messages don't match the exact wording in our spec (see the table above).
-- [List any unfinished screens, buttons, or failing tests, or write "All tests pass."]
+- There is no Restore all button on either deleted screen yet. `Playlist.restoreAllSongs()` works, and `Library.restoreAllPlaylists()` is not written yet.
+- All tests passed at our last run. [Add anything else that comes up in the by-hand GUI checklist.]
 
 ## Next Steps
 
@@ -77,28 +80,28 @@ Head-only `add`, the size counter, the null check on `add`, `contains`, `count`,
 | # | Task | Owner |
 |---|---|---|
 | 1 | Fix "a artist" and make `Song`'s messages match the spec (or update the spec) | Preston |
-| 2 | [Finish wiring the screens to `Library` and `Playlist`, e.g. any screen not done yet] | Amelia |
-| 3 | Run the by-hand GUI checklist from spec section 8: deleted items disappear, bad input is rejected with a message, good input shows up | Amelia and Tanvi |
-| 4 | Final full test run and demo prep | Everyone |
+| 2 | Add `Library.restoreAllPlaylists()` | Tanvi |
+| 3 | Add a Restore all button to both deleted screens (songs and playlists), greyed out when nothing is deleted | Amelia |
+| 4 | Run the by-hand GUI checklist from spec section 8: deleted items disappear, bad input is rejected with a message, good input shows up | Amelia and Tanvi |
+| 5 | Final full test run, demo prep, slides, and write-up | Everyone |
 
 ### Stretch goals
 
 | Stretch goal | Decision |
 |---|---|
-| Restore all songs (`Playlist.restoreAllSongs()`) | **Committed**, already built and tested |
-| Restore all playlists (`Library.restoreAllPlaylists()`) | **Committed** [or dropped] |
+| Restore all songs (`Playlist.restoreAllSongs()`) | **Committed**. The method is built and tested; the screen button is still to do |
+| Restore all playlists (`Library.restoreAllPlaylists()`) | **Committed**. New work: the method in `Library`, then a button on the deleted-playlists screen |
 | GUI application | **Committed**, now part of the MVP |
 | Recently Deleted | **Committed**, now part of the MVP |
-| Save and load | **Dropped** [or committed] |
+| Save and load | **Dropped**. We don't need it for the MVP |
 
 ### New tests we will need
 
 | Added work | Tests | Owner |
 |---|---|---|
 | Song message fix | `SongTest`: blank artist says "Please enter an artist."; 81 characters and a tab give the spec's messages | Tanvi |
-| `Library.restoreAllPlaylists()` (if committed) | Normal: two deleted playlists come back with their songs. Bad input: restore all with nothing deleted doesn't throw | Tanvi |
-| `restoreAllSongs()` on the screen | By hand: Restore all button moves every song back and is greyed out when Recently Deleted is empty | Amelia |
-| Save and load (if committed) | Normal: saved playlists reload with songs. Bad input: a missing or broken file doesn't crash | [Owner] |
+| `Library.restoreAllPlaylists()` | Normal: two deleted playlists come back with their songs. Bad input: restore all with nothing deleted doesn't throw | Tanvi |
+| Restore all buttons on the screens | By hand: each Restore all button moves every item back and is greyed out when Recently Deleted is empty | Amelia |
 
 ## Attribution
 
@@ -110,10 +113,10 @@ Head-only `add`, the size counter, the null check on `add`, `contains`, `count`,
 | `SongTest.java` | Preston | [How] |
 | `Playlist.java` | Tanvi | [How] |
 | `PlaylistTest.java` | Tanvi | [How] |
-| `Library.java` | Tanvi |  [How] |
-| `LibraryTest.java` | Tanvi |  [How] |
-| `HummWindow.java` and the five panels | Amelia | [How] |
-| `pom.xml` / Maven setup | Amelia | [How] |
-| `README.md` | Everyine | [How] |
+| `Library.java` | Tanvi | [How] |
+| `LibraryTest.java` | Tanvi | [How] |
+| `HummWindow.java` and the five panels | Amelia | Designed the screens, picked the fonts, made the GIFs, and chose the layout by hand. The Java code was generally built with AI, working from those designs. Amelia tested it, ran it, and decided what to change |
+| `pom.xml` / Maven setup | Amelia | Set up the files in their respective folders and sections to ensure everyone could find what they needed, and provided instructions. |
+| `README.md` | Everyone | Tanvi set up and filled it out, Amelia revised it and added her contributions within the project, and Preston added his contributions to the project. |
 
-**How we used GenAI:** ADD
+**How we used GenAI:** Our team used GenAI tools while building Humm, and the tool and the way each of us used it varied. The code was generally built with AI help. Amelia's own work was the designs, fonts, GIFs, layout choices, testing, and decisions about what to keep or change with respect to the GUI, as well as overall reviewing all of the files. [Tanvi and Preston: add which tool you used and for which files.]
