@@ -1,51 +1,119 @@
-/*
- * SKELETON: DeletedSongsPanel.java
- * Owner: Amelia
+package humm;
+
+import java.awt.BorderLayout;
+import java.awt.FlowLayout;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.NoSuchElementException;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+
+/**
+ * The open playlist's recently deleted songs, with a way to bring them back.
  *
- * PURPOSE
- *   Screen 4, Recently Deleted songs for the open playlist only.
- *
- * PUBLIC API (use exactly these)
- *  - DeletedSongsPanel(HummWindow window)    void refresh()
- *
- * YOUR JOB
- *  - One row per song from window.getChosenPlaylist().deletedSongs(), each
- *    with its own Restore button (final copy of that row’s Song, then
- *    playlist.restoreSong(song)).
- *  - Buttons: Empty (playlist.emptyDeletedSongs(), gone for good) and Back
- *    (showScreen("SONGS")). Grey out Empty when deletedCount() is 0.
- *  - If a restore throws NoSuchElementException, show "That item is no
- *    longer there." and refresh.
- *  - refresh(): rebuild rows from a fresh iterator. When empty, show
- *    "Nothing here. Deleted songs show up here so you can restore them."
- *  - Restore all is a stretch goal. Add it only after everything else
- *    works.
- *
- * YOU DO NOT HAVE TO WAIT FOR ANYONE
- *  - Use the skeleton Playlist.
- *  - Every other class already exists as a skeleton with the right
- *    signatures, so the project compiles. Code and test against them.
- *
- * RULES
- *  - Package humm. Keep every class, method, parameter and return type
- *    exactly as listed in PUBLIC API and in the spec (section 6). Do not
- *    add, rename or remove public methods, and do not add public fields.
- *    Helpers must be private.
- *  - The skeleton already has the headers. Replace the placeholder bodies
- *    and keep the headers as they are.
- *  - Write a Javadoc comment on the class and on every public method,
- *    directly above the method, with @param, @return and @throws where they
- *    apply. It keeps the code easy to explain in the oral exam.
- *  - Exceptions: use only the ones named here, and always give them a short
- *    message. Never return null to signal an error, never catch an
- *    exception just to hide it, and never print to the console.
- *  - A failed action must leave everything unchanged. Check first, then
- *    change.
- *  - Edit only your own files. If you find a problem in someone else’s
- *    file, or need a signature changed, tell the group and change the spec
- *    first.
- *  - Delete this comment block before submitting.
- *
- * Depends on: Playlist, HummWindow.
- * Tests for this file: by-hand checklist.
+ * @author Amelia Vasquez Rosario
+ * @version October 2026
  */
+public class DeletedSongsPanel
+    extends HummWindow.Screen
+{
+    private final HummWindow window;
+    private final HummWindow.ListPanel list = new HummWindow.ListPanel();
+    private final JButton back = HummWindow.button("Back",
+        HummWindow.WHITE, HummWindow.PURPLE);
+    private final JLabel subtitle = HummWindow.label(" ",
+        HummWindow.body(15f, false), HummWindow.MUTED);
+    private final JLabel notice =
+        HummWindow.label(" ", HummWindow.body(13f, false), HummWindow.ALERT);
+    private final JButton emptyForGood = HummWindow.button("Empty for good",
+        HummWindow.WHITE, HummWindow.ALERT);
+
+    /**
+     * Builds the screen.
+     *
+     * @param window the window this screen lives in
+     */
+    public DeletedSongsPanel(HummWindow window)
+    {
+        this.window = window;
+        back.addActionListener(e -> window.showScreen(HummWindow.SONGS));
+        emptyForGood.addActionListener(e -> {
+            Playlist playlist = window.getChosenPlaylist();
+            if (playlist != null)
+            {
+                playlist.emptyDeletedSongs();
+            }
+            refresh();
+        });
+
+        JLabel title = HummWindow.label("Recently deleted songs",
+            HummWindow.heading(30f, false), HummWindow.PURPLE);
+        JPanel top = new JPanel(new BorderLayout(0, 20));
+        top.setOpaque(false);
+        JPanel backRow = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
+        backRow.setOpaque(false);
+        backRow.add(back);
+        top.add(backRow, BorderLayout.NORTH);
+        JPanel headRow = new JPanel(new BorderLayout());
+        headRow.setOpaque(false);
+        headRow.add(HummWindow.heading(title, subtitle, false),
+            BorderLayout.WEST);
+        headRow.add(notice, BorderLayout.EAST);
+        top.add(headRow, BorderLayout.CENTER);
+
+        JPanel bottom = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0, 0));
+        bottom.setOpaque(false);
+        bottom.add(emptyForGood);
+
+        JPanel page = new JPanel(new BorderLayout(0, 20));
+        page.add(top, BorderLayout.NORTH);
+        page.add(HummWindow.scroller(list), BorderLayout.CENTER);
+        page.add(bottom, BorderLayout.SOUTH);
+        setContent(page);
+    }
+
+
+    /** Rebuilds the rows from the open playlist's deleted songs. */
+    public void refresh()
+    {
+        notice.setText(" ");
+        Playlist playlist = window.getChosenPlaylist();
+        if (playlist == null)
+        {
+            return;
+        }
+        back.setText("Back to " + playlist.getTitle());
+        subtitle.setText("from " + playlist.getTitle());
+        List<JPanel> rows = new ArrayList<>();
+        Iterator<Song> each = playlist.deletedSongs();
+        while (each.hasNext())
+        {
+            rows.add(makeRow(playlist, each.next()));
+        }
+        HummWindow.fill(list, rows,
+            "Nothing here. Deleted songs show up here so you can restore them.");
+        emptyForGood.setEnabled(playlist.deletedCount() > 0);
+    }
+
+
+    private JPanel makeRow(Playlist playlist, Song song)
+    {
+        JButton restore = HummWindow.button("Restore", HummWindow.TURQUOISE,
+            HummWindow.INK);
+        restore.addActionListener(e -> {
+            try
+            {
+                playlist.restoreSong(song);
+                refresh();
+            }
+            catch (NoSuchElementException ex)
+            {
+                refresh();
+                notice.setText("That item is no longer there.");
+            }
+        });
+        return HummWindow.row(song.getTitle(), song.getArtist(), restore);
+    }
+}

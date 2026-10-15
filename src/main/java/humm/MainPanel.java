@@ -1,43 +1,65 @@
-/*
- * SKELETON: MainPanel.java
- * Owner: Amelia
+package humm;
+
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import javax.swing.Icon;
+import javax.swing.JButton;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+
+/**
+ * The main screen: the bird, the name, and a way in.
  *
- * PURPOSE
- *   Screen 1, the front door.
- *
- * PUBLIC API (use exactly these)
- *  - MainPanel(HummWindow window)    void refresh()
- *
- * YOUR JOB
- *  - The Humm title (and hummingbird art, if you draw it) and one button:
- *    Open Playlists, which calls window.showScreen("PLAYLISTS").
- *  - No data and no chains here. refresh() can be empty.
- *
- * YOU DO NOT HAVE TO WAIT FOR ANYONE
- *  - Nothing waits on anyone. Do this one first.
- *  - Every other class already exists as a skeleton with the right
- *    signatures, so the project compiles. Code and test against them.
- *
- * RULES
- *  - Package humm. Keep every class, method, parameter and return type
- *    exactly as listed in PUBLIC API and in the spec (section 6). Do not
- *    add, rename or remove public methods, and do not add public fields.
- *    Helpers must be private.
- *  - The skeleton already has the headers. Replace the placeholder bodies
- *    and keep the headers as they are.
- *  - Write a Javadoc comment on the class and on every public method,
- *    directly above the method, with @param, @return and @throws where they
- *    apply. It keeps the code easy to explain in the oral exam.
- *  - Exceptions: use only the ones named here, and always give them a short
- *    message. Never return null to signal an error, never catch an
- *    exception just to hide it, and never print to the console.
- *  - A failed action must leave everything unchanged. Check first, then
- *    change.
- *  - Edit only your own files. If you find a problem in someone else’s
- *    file, or need a signature changed, tell the group and change the spec
- *    first.
- *  - Delete this comment block before submitting.
- *
- * Depends on: HummWindow (to switch screens).
- * Tests for this file: by-hand checklist.
+ * @author Amelia Vasquez Rosario
+ * @version October 2026
  */
+public class MainPanel
+    extends HummWindow.Screen
+{
+    /**
+     * Builds the screen.
+     *
+     * @param window the window this screen lives in
+     */
+    public MainPanel(HummWindow window)
+    {
+        JPanel column = new JPanel(new GridBagLayout());
+        GridBagConstraints at = new GridBagConstraints();
+        at.gridx = 0;
+        at.gridy = GridBagConstraints.RELATIVE;
+        at.insets = new Insets(10, 0, 10, 0);
+
+        Icon bird = HummWindow.picture("bird-main.gif");
+        if (bird != null)
+        {
+            column.add(new JLabel(bird), at);
+        }
+
+        column.add(HummWindow.label("Humm", HummWindow.heading(88f, true),
+            HummWindow.PURPLE), at);
+        column.add(HummWindow.bar(120, 8), at);
+        column.add(HummWindow.label("Playlists, kept close.",
+            HummWindow.body(20f, false), HummWindow.MUTED), at);
+
+        JButton open = HummWindow.button("Open Playlists", HummWindow.PURPLE,
+            HummWindow.WHITE);
+        open.setFont(HummWindow.body(18f, true));
+        open.addActionListener(e -> window.showScreen(HummWindow.PLAYLISTS));
+        at.insets = new Insets(26, 0, 10, 0);
+        at.ipadx = 24;
+        column.add(open, at);
+
+        column.setOpaque(false);
+        setContent(wrap(column));
+    }
+
+
+    private static JComponent wrap(JPanel column)
+    {
+        JPanel middle = new JPanel(new GridBagLayout());
+        middle.add(column);
+        return middle;
+    }
+}

@@ -1,62 +1,163 @@
-/*
- * SKELETON: PlaylistsPanel.java
- * Owner: Amelia
+package humm;
+
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.NoSuchElementException;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+
+/**
+ * The playlists screen: every playlist, with a bird that opens the
+ * new-playlist card.
  *
- * PURPOSE
- *   Screen 2, all active playlists.
- *
- * PUBLIC API (use exactly these)
- *  - PlaylistsPanel(HummWindow window)    void refresh()
- *
- * YOUR JOB
- *  - One row per playlist: loop window.getLibrary().playlists(). Each row
- *    shows the title and description, has its own Delete button, and a way
- *    to open it (set window.setChosenPlaylist(thatPlaylist), then
- *    showScreen("SONGS")).
- *  - In each row, copy the Playlist into a final variable and use THAT in
- *    the button handler. This is what makes Delete hit the right row even
- *    when titles repeat.
- *  - Create: title and description fields and a Create button calling
- *    library.createPlaylist(...). Catch IllegalArgumentException, show
- *    getMessage() in a label near the fields, keep what the user typed, and
- *    add nothing.
- *  - Buttons: Clear all (library.clearPlaylists()) and Deleted playlists
- *    (showScreen("DELETED_PLAYLISTS")).
- *  - If a Delete throws NoSuchElementException, show "That item is no
- *    longer there." and refresh.
- *  - refresh(): remove all rows, rebuild them from a fresh iterator, grey
- *    out Clear all when playlistCount() is 0, clear the message label. When
- *    empty, show "It’s a little quiet here. Create a playlist to get
- *    started." instead of rows.
- *  - Call refresh() after every successful change. Never change the library
- *    while looping over an iterator: collect the click first, then act.
- *
- * YOU DO NOT HAVE TO WAIT FOR ANYONE
- *  - Use the skeleton Library. The real one fills in later with the same
- *    signatures.
- *  - Every other class already exists as a skeleton with the right
- *    signatures, so the project compiles. Code and test against them.
- *
- * RULES
- *  - Package humm. Keep every class, method, parameter and return type
- *    exactly as listed in PUBLIC API and in the spec (section 6). Do not
- *    add, rename or remove public methods, and do not add public fields.
- *    Helpers must be private.
- *  - The skeleton already has the headers. Replace the placeholder bodies
- *    and keep the headers as they are.
- *  - Write a Javadoc comment on the class and on every public method,
- *    directly above the method, with @param, @return and @throws where they
- *    apply. It keeps the code easy to explain in the oral exam.
- *  - Exceptions: use only the ones named here, and always give them a short
- *    message. Never return null to signal an error, never catch an
- *    exception just to hide it, and never print to the console.
- *  - A failed action must leave everything unchanged. Check first, then
- *    change.
- *  - Edit only your own files. If you find a problem in someone else’s
- *    file, or need a signature changed, tell the group and change the spec
- *    first.
- *  - Delete this comment block before submitting.
- *
- * Depends on: Library, Playlist, HummWindow.
- * Tests for this file: by-hand checklist.
+ * @author Amelia Vasquez Rosario
+ * @version October 2026
  */
+public class PlaylistsPanel
+    extends HummWindow.Screen
+{
+    private final HummWindow window;
+    private final HummWindow.ListPanel list = new HummWindow.ListPanel();
+    private final JTextField titleField = HummWindow.field("Late night drive");
+    private final JTextField descField =
+        HummWindow.field("Songs for the highway");
+    private final JLabel message =
+        HummWindow.label(" ", HummWindow.body(12f, false), HummWindow.ALERT);
+    private final JLabel notice =
+        HummWindow.label(" ", HummWindow.body(13f, false), HummWindow.ALERT);
+    private final JButton clearAll =
+        HummWindow.button("Clear all", HummWindow.WHITE, HummWindow.ALERT);
+    private final JButton deleted = HummWindow.button("Deleted playlists",
+        HummWindow.TURQUOISE, HummWindow.INK);
+
+    /**
+     * Builds the screen.
+     *
+     * @param window the window this screen lives in
+     */
+    public PlaylistsPanel(HummWindow window)
+    {
+        this.window = window;
+        addCircle(0, new Color(0xB7FFF0), HummWindow.TURQUOISE);
+        addCircle(3, new Color(0xE8D6FF), new Color(0x8355E2));
+
+        JLabel title = HummWindow.label("Tune in",
+            HummWindow.heading(30f, false), HummWindow.PURPLE);
+        JPanel head = HummWindow.heading(title, null, true);
+        JPanel headRow = new JPanel(new BorderLayout());
+        headRow.setOpaque(false);
+        headRow.add(head, BorderLayout.EAST);
+        headRow.add(notice, BorderLayout.WEST);
+
+        JButton home = HummWindow.button("Home", HummWindow.WHITE,
+            HummWindow.PURPLE);
+        home.addActionListener(e -> window.showScreen(HummWindow.MAIN));
+        clearAll.addActionListener(e -> {
+            window.getLibrary().clearPlaylists();
+            refresh();
+        });
+        deleted.addActionListener(
+            e -> window.showScreen(HummWindow.DELETED_PLAYLISTS));
+
+        JPanel page = new JPanel(new BorderLayout(0, 20));
+        page.add(headRow, BorderLayout.NORTH);
+        page.add(HummWindow.scroller(list), BorderLayout.CENTER);
+        page.add(HummWindow.buttonRow(home, clearAll, deleted),
+            BorderLayout.SOUTH);
+        setContent(page);
+
+        JButton cancel = HummWindow.button("Cancel", HummWindow.WHITE,
+            HummWindow.PURPLE);
+        JButton create = HummWindow.button("Create", HummWindow.PURPLE,
+            HummWindow.WHITE);
+        cancel.addActionListener(e -> closeCard());
+        create.addActionListener(e -> createPlaylist());
+        titleField.addActionListener(e -> createPlaylist());
+        descField.addActionListener(e -> createPlaylist());
+        JPanel card = HummWindow.formCard("New playlist",
+            new String[] {"Title", "Description"},
+            new JTextField[] {titleField, descField}, message, cancel, create);
+        setBird(HummWindow.pictureButton("bird-playlists.gif",
+            "New playlist"), true, card);
+    }
+
+
+    private void closeCard()
+    {
+        titleField.setText("");
+        descField.setText("");
+        message.setText(" ");
+        setCardOpen(false);
+    }
+
+
+    private void createPlaylist()
+    {
+        try
+        {
+            window.getLibrary().createPlaylist(titleField.getText(),
+                descField.getText());
+        }
+        catch (IllegalArgumentException e)
+        {
+            message.setText(e.getMessage());
+            return;
+        }
+        closeCard();
+        refresh();
+    }
+
+
+    /** Rebuilds the rows and button labels from the Library. */
+    public void refresh()
+    {
+        closeCard();
+        notice.setText(" ");
+        List<JPanel> rows = new ArrayList<>();
+        Iterator<Playlist> each = window.getLibrary().playlists();
+        while (each.hasNext())
+        {
+            rows.add(makeRow(each.next()));
+        }
+        HummWindow.fill(list, rows,
+            "It’s a little quiet here. Tap the bird to start a playlist.");
+        clearAll.setEnabled(window.getLibrary().playlistCount() > 0);
+        deleted.setText("Deleted playlists ("
+            + window.getLibrary().deletedPlaylistCount() + ")");
+    }
+
+
+    private JPanel makeRow(Playlist playlist)
+    {
+        int n = playlist.songCount();
+        JLabel count = HummWindow.label(n + (n == 1 ? " song" : " songs"),
+            HummWindow.body(13f, false), HummWindow.MUTED);
+        JButton open = HummWindow.button("Open", HummWindow.PURPLE,
+            HummWindow.WHITE);
+        JButton delete = HummWindow.button("Delete", HummWindow.WHITE,
+            HummWindow.ALERT);
+        open.addActionListener(e -> {
+            window.setChosenPlaylist(playlist);
+            window.showScreen(HummWindow.SONGS);
+        });
+        delete.addActionListener(e -> {
+            try
+            {
+                window.getLibrary().deletePlaylist(playlist);
+                refresh();
+            }
+            catch (NoSuchElementException ex)
+            {
+                refresh();
+                notice.setText("That item is no longer there.");
+            }
+        });
+        return HummWindow.row(playlist.getTitle(), playlist.getDescription(),
+            count, open, delete);
+    }
+}

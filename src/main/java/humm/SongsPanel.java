@@ -1,56 +1,170 @@
-/*
- * SKELETON: SongsPanel.java
- * Owner: Amelia
+package humm;
+
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.NoSuchElementException;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+
+/**
+ * The songs screen for the open playlist, with a bird that opens the
+ * add-a-song card.
  *
- * PURPOSE
- *   Screen 3, the songs in the open playlist.
- *
- * PUBLIC API (use exactly these)
- *  - SongsPanel(HummWindow window)    void refresh()
- *
- * YOUR JOB
- *  - Get the playlist from window.getChosenPlaylist(). Show its title and
- *    description, then one row per song from playlist.songs(). Each row
- *    shows "title by artist" and has its own Delete button, using a final
- *    copy of that row’s Song in the handler.
- *  - Add: title and artist fields and an Add button doing
- *    playlist.addSong(new Song(...)). Catch IllegalArgumentException, show
- *    getMessage() near the fields, keep the typed text, add nothing.
- *  - Buttons: Clear songs (playlist.clearSongs()), Deleted songs
- *    (showScreen("DELETED_SONGS")), Back (showScreen("PLAYLISTS")).
- *  - If deleteSong throws NoSuchElementException, show "That item is no
- *    longer there." and refresh.
- *  - refresh(): rebuild rows from a fresh iterator, grey out Clear songs
- *    when songCount() is 0, clear the message label. When empty, show "No
- *    songs yet. Add one above."
- *  - If getChosenPlaylist() is null (should not happen), go back to the
- *    playlists screen instead of crashing.
- *
- * YOU DO NOT HAVE TO WAIT FOR ANYONE
- *  - Use the skeleton Playlist. Same signatures later.
- *  - Every other class already exists as a skeleton with the right
- *    signatures, so the project compiles. Code and test against them.
- *
- * RULES
- *  - Package humm. Keep every class, method, parameter and return type
- *    exactly as listed in PUBLIC API and in the spec (section 6). Do not
- *    add, rename or remove public methods, and do not add public fields.
- *    Helpers must be private.
- *  - The skeleton already has the headers. Replace the placeholder bodies
- *    and keep the headers as they are.
- *  - Write a Javadoc comment on the class and on every public method,
- *    directly above the method, with @param, @return and @throws where they
- *    apply. It keeps the code easy to explain in the oral exam.
- *  - Exceptions: use only the ones named here, and always give them a short
- *    message. Never return null to signal an error, never catch an
- *    exception just to hide it, and never print to the console.
- *  - A failed action must leave everything unchanged. Check first, then
- *    change.
- *  - Edit only your own files. If you find a problem in someone else’s
- *    file, or need a signature changed, tell the group and change the spec
- *    first.
- *  - Delete this comment block before submitting.
- *
- * Depends on: Playlist, HummWindow (for the open playlist).
- * Tests for this file: by-hand checklist.
+ * @author Amelia Vasquez Rosario
+ * @version October 2026
  */
+public class SongsPanel
+    extends HummWindow.Screen
+{
+    private final HummWindow window;
+    private final HummWindow.ListPanel list = new HummWindow.ListPanel();
+    private final JLabel title = HummWindow.label(" ",
+        HummWindow.heading(30f, false), HummWindow.PURPLE);
+    private final JLabel subtitle = HummWindow.label(" ",
+        HummWindow.body(15f, false), HummWindow.MUTED);
+    private final JTextField titleField = HummWindow.field("Clair de Lune");
+    private final JTextField artistField = HummWindow.field("Debussy");
+    private final JLabel message =
+        HummWindow.label(" ", HummWindow.body(12f, false), HummWindow.ALERT);
+    private final JLabel notice =
+        HummWindow.label(" ", HummWindow.body(13f, false), HummWindow.ALERT);
+    private final JButton clearSongs = HummWindow.button("Clear songs",
+        HummWindow.WHITE, HummWindow.ALERT);
+    private final JButton deleted = HummWindow.button("Deleted songs",
+        HummWindow.TURQUOISE, HummWindow.INK);
+
+    /**
+     * Builds the screen.
+     *
+     * @param window the window this screen lives in
+     */
+    public SongsPanel(HummWindow window)
+    {
+        this.window = window;
+        addCircle(1, new Color(0xD9FBF7), HummWindow.TURQUOISE);
+        addCircle(2, new Color(0xDDC9F9), new Color(0x9562FF));
+
+        JPanel headRow = new JPanel(new BorderLayout());
+        headRow.setOpaque(false);
+        headRow.add(HummWindow.heading(title, subtitle, false),
+            BorderLayout.WEST);
+        headRow.add(notice, BorderLayout.EAST);
+
+        JButton back = HummWindow.button("Back to playlists",
+            HummWindow.WHITE, HummWindow.PURPLE);
+        back.addActionListener(e -> window.showScreen(HummWindow.PLAYLISTS));
+        clearSongs.addActionListener(e -> {
+            Playlist playlist = window.getChosenPlaylist();
+            if (playlist != null)
+            {
+                playlist.clearSongs();
+            }
+            refresh();
+        });
+        deleted.addActionListener(
+            e -> window.showScreen(HummWindow.DELETED_SONGS));
+
+        JPanel page = new JPanel(new BorderLayout(0, 20));
+        page.add(headRow, BorderLayout.NORTH);
+        page.add(HummWindow.scroller(list), BorderLayout.CENTER);
+        page.add(HummWindow.buttonRow(back, clearSongs, deleted),
+            BorderLayout.SOUTH);
+        setContent(page);
+
+        JButton cancel = HummWindow.button("Cancel", HummWindow.WHITE,
+            HummWindow.PURPLE);
+        JButton add = HummWindow.button("Add song", HummWindow.PURPLE,
+            HummWindow.WHITE);
+        cancel.addActionListener(e -> closeCard());
+        add.addActionListener(e -> addSong());
+        titleField.addActionListener(e -> addSong());
+        artistField.addActionListener(e -> addSong());
+        JPanel card = HummWindow.formCard("Add a song",
+            new String[] {"Song title", "Artist"},
+            new JTextField[] {titleField, artistField}, message, cancel, add);
+        setBird(HummWindow.pictureButton("bird-songs.gif", "Add a song"),
+            false, card);
+    }
+
+
+    private void closeCard()
+    {
+        titleField.setText("");
+        artistField.setText("");
+        message.setText(" ");
+        setCardOpen(false);
+    }
+
+
+    private void addSong()
+    {
+        Playlist playlist = window.getChosenPlaylist();
+        if (playlist == null)
+        {
+            return;
+        }
+        try
+        {
+            playlist.addSong(new Song(titleField.getText(),
+                artistField.getText()));
+        }
+        catch (IllegalArgumentException e)
+        {
+            message.setText(e.getMessage());
+            return;
+        }
+        closeCard();
+        refresh();
+    }
+
+
+    /** Rebuilds the rows and button labels from the open playlist. */
+    public void refresh()
+    {
+        closeCard();
+        notice.setText(" ");
+        Playlist playlist = window.getChosenPlaylist();
+        if (playlist == null)
+        {
+            return;
+        }
+        title.setText(playlist.getTitle());
+        title.setToolTipText(playlist.getTitle());
+        String description = playlist.getDescription();
+        subtitle.setText(description.isEmpty() ? " " : description);
+        List<JPanel> rows = new ArrayList<>();
+        Iterator<Song> each = playlist.songs();
+        while (each.hasNext())
+        {
+            rows.add(makeRow(playlist, each.next()));
+        }
+        HummWindow.fill(list, rows, "No songs yet. Tap the bird to add one.");
+        clearSongs.setEnabled(playlist.songCount() > 0);
+        deleted.setText("Deleted songs (" + playlist.deletedCount() + ")");
+    }
+
+
+    private JPanel makeRow(Playlist playlist, Song song)
+    {
+        JButton delete = HummWindow.button("Delete", HummWindow.WHITE,
+            HummWindow.ALERT);
+        delete.addActionListener(e -> {
+            try
+            {
+                playlist.deleteSong(song);
+                refresh();
+            }
+            catch (NoSuchElementException ex)
+            {
+                refresh();
+                notice.setText("That item is no longer there.");
+            }
+        });
+        return HummWindow.row(song.getTitle(), song.getArtist(), delete);
+    }
+}
