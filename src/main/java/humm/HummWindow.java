@@ -268,6 +268,24 @@ public class HummWindow
         JLabel label = new JLabel(text);
         label.setFont(font);
         label.setForeground(color);
+        // a little spare room so the last letter is never swapped for "..."
+        label.setBorder(BorderFactory.createEmptyBorder(0, 0, 0,
+            Math.round(font.getSize2D() * 0.4f)));
+        return label;
+    }
+
+
+    /**
+     * Makes a label sit in the middle with spare room on both sides, so its
+     * words are never cut short.
+     *
+     * @param label the label
+     * @return the same label
+     */
+    static JLabel centered(JLabel label)
+    {
+        int pad = Math.round(label.getFont().getSize2D() * 0.2f);
+        label.setBorder(BorderFactory.createEmptyBorder(0, pad, 0, pad));
         return label;
     }
 
@@ -351,6 +369,9 @@ public class HummWindow
         else
         {
             button = new JButton(icon);
+            // no padding at all, so the picture can sit right on the edge
+            button.setBorder(BorderFactory.createEmptyBorder());
+            button.setMargin(new java.awt.Insets(0, 0, 0, 0));
             button.setBorderPainted(false);
             button.setContentAreaFilled(false);
             button.setFocusPainted(false);
@@ -394,6 +415,13 @@ public class HummWindow
         JPanel heading = new JPanel();
         heading.setOpaque(false);
         heading.setLayout(new BoxLayout(heading, BoxLayout.Y_AXIS));
+        if (onRight)
+        {
+            // spare room goes on the left so the words still end at the bar
+            int pad = Math.round(title.getFont().getSize2D() * 0.4f);
+            title.setBorder(BorderFactory.createEmptyBorder(0, pad, 0, 0));
+            title.setHorizontalAlignment(SwingConstants.RIGHT);
+        }
         title.setAlignmentX(side);
         heading.add(title);
         if (subtitle != null)

@@ -18,6 +18,9 @@ import javax.swing.JPanel;
 public class MainPanel
     extends HummWindow.Screen
 {
+    /** The bird picture in src/main/resources/images. Change the name here. */
+    private static final String BIRD = "humm3.GIF";
+
     /**
      * Builds the screen.
      *
@@ -31,17 +34,17 @@ public class MainPanel
         at.gridy = GridBagConstraints.RELATIVE;
         at.insets = new Insets(10, 0, 10, 0);
 
-        Icon bird = HummWindow.picture("humm3.GIF");
+        Icon bird = HummWindow.picture(BIRD);
         if (bird != null)
         {
             column.add(new JLabel(bird), at);
         }
 
-        column.add(HummWindow.label("Humm", HummWindow.heading(88f, true),
-            HummWindow.PURPLE), at);
+        column.add(HummWindow.centered(HummWindow.label("Humm",
+            HummWindow.heading(88f, true), HummWindow.PURPLE)), at);
         column.add(HummWindow.bar(120, 8), at);
-        column.add(HummWindow.label("Playlists, kept close.",
-            HummWindow.body(20f, false), HummWindow.MUTED), at);
+        column.add(HummWindow.centered(HummWindow.label("Playlists, kept close.",
+            HummWindow.body(20f, false), HummWindow.MUTED)), at);
 
         JButton open = HummWindow.button("Open Playlists", HummWindow.PURPLE,
             HummWindow.WHITE);
