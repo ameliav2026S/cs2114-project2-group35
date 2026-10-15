@@ -31,7 +31,7 @@ public class MainPanel
         at.gridy = GridBagConstraints.RELATIVE;
         at.insets = new Insets(10, 0, 10, 0);
 
-        Icon bird = HummWindow.picture("bird-main.gif");
+        Icon bird = HummWindow.picture("humm.GIF");
         if (bird != null)
         {
             column.add(new JLabel(bird), at);

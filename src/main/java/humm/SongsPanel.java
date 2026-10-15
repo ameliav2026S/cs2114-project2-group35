@@ -87,7 +87,7 @@ public class SongsPanel
         JPanel card = HummWindow.formCard("Add a song",
             new String[] {"Song title", "Artist"},
             new JTextField[] {titleField, artistField}, message, cancel, add);
-        setBird(HummWindow.pictureButton("bird-songs.gif", "Add a song"),
+        setBird(HummWindow.pictureButton("vinyl.GIF", "Add a song"),
             false, card);
     }
 

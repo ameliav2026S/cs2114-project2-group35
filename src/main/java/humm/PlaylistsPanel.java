@@ -82,7 +82,7 @@ public class PlaylistsPanel
         JPanel card = HummWindow.formCard("New playlist",
             new String[] {"Title", "Description"},
             new JTextField[] {titleField, descField}, message, cancel, create);
-        setBird(HummWindow.pictureButton("bird-playlists.gif",
+        setBird(HummWindow.pictureButton("flower.GIF",
             "New playlist"), true, card);
     }
 
