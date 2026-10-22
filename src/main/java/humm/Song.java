@@ -48,8 +48,11 @@ public class Song
     {
         if (value == null || value.trim().isEmpty())
         {
-            throw new IllegalArgumentException("Please enter a " + field + ".");
+    String article = "aeiou".indexOf(field.charAt(0)) >= 0 ? "an" : "a";
+    throw new IllegalArgumentException(
+        "Please enter " + article + " " + field + ".");
         }
+        
         String trimmed = value.trim();
         if (trimmed.length() > 80)
         {
