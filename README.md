@@ -85,7 +85,7 @@ Head-only `add`, the size counter, the null check on `add`, `contains`, `count`,
 | 2 | Add `Library.restoreAllPlaylists()` | Tanvi |
 | 3 | Add a Restore all button to both deleted screens (songs and playlists), greyed out when nothing is deleted | Amelia |
 | 4 | Run the by-hand GUI checklist from spec section 8: deleted items disappear, bad input is rejected with a message, good input shows up | Amelia and Tanvi |
-| 5 | Final full test run, demo prep, slides, and write-up | Everyone |
+| 5 | Final full test run, demo prep, and slides | Everyone |
 
 ### Stretch goals
 

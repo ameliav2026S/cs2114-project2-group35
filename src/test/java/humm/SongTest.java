@@ -1,4 +1,3 @@
-
 package humm;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -59,6 +58,23 @@ public class SongTest
             assertThrows(
                 IllegalArgumentException.class,
                 () -> new Song("a\tb", "A")).getMessage());
+    }
+
+
+    /** A blank or missing artist says "an artist", not "a artist". */
+    @Test
+    public void blankArtistMessageUsesAn()
+    {
+        assertEquals(
+            "Please enter an artist.",
+            assertThrows(
+                IllegalArgumentException.class,
+                () -> new Song("T", " ")).getMessage());
+        assertEquals(
+            "Please enter an artist.",
+            assertThrows(
+                IllegalArgumentException.class,
+                () -> new Song("T", null)).getMessage());
     }
 
 

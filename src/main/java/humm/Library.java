@@ -96,6 +96,19 @@ public class Library
     }
 
     /**
+     * This method (stretch goal) moves all the playlists in Recently Deleted
+     * back into the library, then empties Recently Deleted.
+     */
+    public void restoreAllPlaylists()
+    {
+        for (Playlist playlist : deletedPlaylists)
+        {
+            playlists.add(playlist);
+        }
+        deletedPlaylists.clear();
+    }
+
+    /**
      * This method loops over the active playlists to draw rows.
      * This helps the iterator step through a playlist one at a time so other classes can look at each playlist without touching the chain.
      * @return iterator over the playlists
