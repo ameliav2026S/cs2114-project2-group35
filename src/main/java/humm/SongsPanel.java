@@ -21,18 +21,22 @@ import javax.swing.JTextField;
 public class SongsPanel
     extends HummWindow.Screen
 {
+    /** The bird picture in src/main/resources/images. Change the name here. */
+    private static final String BIRD = "vinyl4.GIF";
+
     private final HummWindow window;
     private final HummWindow.ListPanel list = new HummWindow.ListPanel();
     private final JLabel title = HummWindow.label(" ",
-        HummWindow.heading(30f, false), HummWindow.PURPLE);
+        HummWindow.heading(30f, false), HummWindow.HEAD);
     private final JLabel subtitle = HummWindow.label(" ",
         HummWindow.body(15f, false), HummWindow.MUTED);
     private final JTextField titleField = HummWindow.field("Clair de Lune");
     private final JTextField artistField = HummWindow.field("Debussy");
     private final JLabel message =
-        HummWindow.label(" ", HummWindow.body(12f, false), HummWindow.ALERT);
+        HummWindow.label(" ", HummWindow.body(12f, false), HummWindow.ALERT_TEXT);
     private final JLabel notice =
-        HummWindow.label(" ", HummWindow.body(13f, false), HummWindow.ALERT);
+        HummWindow.label(" ", HummWindow.body(13f, false),
+            HummWindow.ALERT_TEXT);
     private final JButton clearSongs = HummWindow.button("Clear songs",
         HummWindow.ALERT, HummWindow.WHITE);
     private final JButton deleted = HummWindow.button("Deleted songs",
@@ -46,8 +50,8 @@ public class SongsPanel
     public SongsPanel(HummWindow window)
     {
         this.window = window;
-        addCircle(1, new Color(0xD9FBF7), HummWindow.TURQUOISE);
-        addCircle(2, new Color(0xDDC9F9), new Color(0x9562FF));
+        addCircle(1, new Color(0x14403C), HummWindow.TURQUOISE);
+        addCircle(2, new Color(0x33206B), new Color(0x9562FF));
 
         JPanel headRow = new JPanel(new BorderLayout());
         headRow.setOpaque(false);
@@ -77,7 +81,7 @@ public class SongsPanel
         setContent(page);
 
         JButton cancel = HummWindow.button("Cancel", HummWindow.WHITE,
-            HummWindow.PURPLE);
+            HummWindow.HEAD);
         JButton add = HummWindow.button("Add song", HummWindow.PURPLE,
             HummWindow.WHITE);
         cancel.addActionListener(e -> closeCard());
@@ -87,7 +91,7 @@ public class SongsPanel
         JPanel card = HummWindow.formCard("Add a song",
             new String[] {"Song title", "Artist"},
             new JTextField[] {titleField, artistField}, message, cancel, add);
-        setBird(HummWindow.pictureButton("vinyl4.GIF", "Add a song"),
+        setBird(HummWindow.pictureButton(BIRD, "Add a song"),
             false, card);
     }
 

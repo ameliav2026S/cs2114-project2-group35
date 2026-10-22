@@ -30,9 +30,10 @@ public class PlaylistsPanel
     private final JTextField descField =
         HummWindow.field("Songs for the highway");
     private final JLabel message =
-        HummWindow.label(" ", HummWindow.body(12f, false), HummWindow.ALERT);
+        HummWindow.label(" ", HummWindow.body(12f, false), HummWindow.ALERT_TEXT);
     private final JLabel notice =
-        HummWindow.label(" ", HummWindow.body(13f, false), HummWindow.ALERT);
+        HummWindow.label(" ", HummWindow.body(13f, false),
+            HummWindow.ALERT_TEXT);
     private final JButton clearAll =
         HummWindow.button("Clear all", HummWindow.ALERT, HummWindow.WHITE);
     private final JButton deleted = HummWindow.button("Deleted playlists",
@@ -46,11 +47,11 @@ public class PlaylistsPanel
     public PlaylistsPanel(HummWindow window)
     {
         this.window = window;
-        addCircle(0, new Color(0xB7FFF0), HummWindow.TURQUOISE);
-        addCircle(3, new Color(0xE8D6FF), new Color(0x8355E2));
+        addCircle(0, new Color(0x14403C), HummWindow.TURQUOISE);
+        addCircle(3, new Color(0x2F1D5E), new Color(0x8355E2));
 
         JLabel title = HummWindow.label("Tune in",
-            HummWindow.heading(30f, false), HummWindow.PURPLE);
+            HummWindow.heading(30f, false), HummWindow.HEAD);
         JPanel headRow = new JPanel(new BorderLayout(0, 6));
         headRow.setOpaque(false);
         headRow.add(HummWindow.centeredHeading(title), BorderLayout.CENTER);
@@ -74,7 +75,7 @@ public class PlaylistsPanel
         setContent(page);
 
         JButton cancel = HummWindow.button("Cancel", HummWindow.WHITE,
-            HummWindow.PURPLE);
+            HummWindow.HEAD);
         JButton create = HummWindow.button("Create", HummWindow.PURPLE,
             HummWindow.WHITE);
         cancel.addActionListener(e -> closeCard());

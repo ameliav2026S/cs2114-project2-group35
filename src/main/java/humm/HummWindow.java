@@ -1,6 +1,6 @@
 package humm;
 
-import com.formdev.flatlaf.FlatLightLaf;
+import com.formdev.flatlaf.FlatDarkLaf;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Color;
@@ -59,13 +59,20 @@ public class HummWindow
     // ---- colors ----
 
     static final Color PURPLE = new Color(0x8355E2);
+    static final Color HEAD = new Color(0xB39BFF);
     static final Color INK = new Color(0x1E1033);
-    static final Color MUTED = new Color(0x5D4F7C);
-    static final Color LAVENDER = new Color(0xF1ECFF);
-    static final Color LINE = new Color(0xE1D8F3);
+    static final Color TEXT = new Color(0xF3EEFF);
+    static final Color MUTED = new Color(0xB6A8D6);
+    static final Color LAVENDER = new Color(0x2A1B4D);
+    static final Color ROW = new Color(0x231640);
+    static final Color LINE = new Color(0x3A2A63);
+    static final Color CARD_LINE = new Color(0x44327A);
+    static final Color FIELD = new Color(0x1A0F30);
+    static final Color FIELD_LINE = new Color(0x4A3880);
     static final Color TURQUOISE = new Color(0x3EE0D0);
-    static final Color BACKGROUND = new Color(0xFAF8FF);
-    static final Color ALERT = new Color(0xB3261E);
+    static final Color BACKGROUND = new Color(0x150B26);
+    static final Color ALERT = new Color(0xD64545);
+    static final Color ALERT_TEXT = new Color(0xFF8A8A);
     static final Color WHITE = Color.WHITE;
 
     // ---- fonts (loaded once from src/main/resources/fonts) ----
@@ -123,7 +130,9 @@ public class HummWindow
      */
     public static void main(String[] args)
     {
-        FlatLightLaf.setup();
+        FlatDarkLaf.setup();
+        javax.swing.UIManager.put("ScrollBar.thumb", new Color(0x5B4796));
+        javax.swing.UIManager.put("ScrollBar.track", new Color(0x150B26));
         SwingUtilities.invokeLater(() -> {
             HummWindow window = new HummWindow(new Library());
             window.setVisible(true);
@@ -327,6 +336,10 @@ public class HummWindow
         field.putClientProperty("JTextField.placeholderText", hint);
         field.putClientProperty("JComponent.roundRect", true);
         field.putClientProperty("JComponent.minimumHeight", 44);
+        field.putClientProperty("JComponent.outline", FIELD_LINE);
+        field.setBackground(FIELD);
+        field.setForeground(TEXT);
+        field.setCaretColor(TEXT);
         return field;
     }
 
@@ -510,13 +523,13 @@ public class HummWindow
      */
     static JPanel row(String title, String detail, JComponent... right)
     {
-        Card row = new Card(WHITE, 16);
+        Card row = new Card(ROW, 16);
         row.setLayout(new BorderLayout(16, 0));
         row.setBorder(BorderFactory.createEmptyBorder(14, 24, 14, 24));
         JPanel text = new JPanel();
         text.setOpaque(false);
         text.setLayout(new BoxLayout(text, BoxLayout.Y_AXIS));
-        JLabel top = label(title, body(17f, true), INK);
+        JLabel top = label(title, body(17f, true), TEXT);
         top.setAlignmentX(JComponent.LEFT_ALIGNMENT);
         top.setToolTipText(title);
         text.add(top);
@@ -607,7 +620,7 @@ public class HummWindow
         };
         card.setLayout(new BoxLayout(card, BoxLayout.Y_AXIS));
         card.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
-        JLabel heading = label(title, heading(16f, false), PURPLE);
+        JLabel heading = label(title, heading(16f, false), HEAD);
         heading.setAlignmentX(JComponent.LEFT_ALIGNMENT);
         card.add(heading);
         for (int i = 0; i < fields.length; i++)
@@ -804,7 +817,7 @@ public class HummWindow
                 RenderingHints.VALUE_ANTIALIAS_ON);
             g2.setColor(fill);
             g2.fillRoundRect(0, 0, getWidth() - 1, getHeight() - 1, arc, arc);
-            g2.setColor(LINE);
+            g2.setColor(LAVENDER.equals(fill) ? CARD_LINE : LINE);
             g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, arc, arc);
             g2.dispose();
         }

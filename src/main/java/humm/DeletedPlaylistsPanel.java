@@ -22,9 +22,12 @@ public class DeletedPlaylistsPanel
     private final HummWindow window;
     private final HummWindow.ListPanel list = new HummWindow.ListPanel();
     private final JLabel notice =
-        HummWindow.label(" ", HummWindow.body(13f, false), HummWindow.ALERT);
+        HummWindow.label(" ", HummWindow.body(13f, false),
+            HummWindow.ALERT_TEXT);
     private final JButton emptyForGood = HummWindow.button("Empty for good",
-        HummWindow.WHITE, HummWindow.ALERT);
+        HummWindow.ALERT, HummWindow.WHITE);
+    private final JButton restoreAll = HummWindow.button("Restore all",
+        HummWindow.TURQUOISE, HummWindow.INK);
 
     /**
      * Builds the screen.
@@ -35,15 +38,19 @@ public class DeletedPlaylistsPanel
     {
         this.window = window;
         JButton back = HummWindow.button("Back to playlists",
-            HummWindow.WHITE, HummWindow.PURPLE);
+            HummWindow.PURPLE, HummWindow.WHITE);
         back.addActionListener(e -> window.showScreen(HummWindow.PLAYLISTS));
+        restoreAll.addActionListener(e -> {
+            window.getLibrary().restoreAllPlaylists();
+            refresh();
+        });
         emptyForGood.addActionListener(e -> {
             window.getLibrary().emptyDeletedPlaylists();
             refresh();
         });
 
         JLabel title = HummWindow.label("Recently deleted playlists",
-            HummWindow.heading(30f, false), HummWindow.PURPLE);
+            HummWindow.heading(30f, false), HummWindow.HEAD);
         JPanel top = new JPanel(new BorderLayout(0, 20));
         top.setOpaque(false);
         JPanel backRow = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
@@ -59,6 +66,8 @@ public class DeletedPlaylistsPanel
 
         JPanel bottom = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0, 0));
         bottom.setOpaque(false);
+        bottom.add(restoreAll);
+        bottom.add(javax.swing.Box.createHorizontalStrut(12));
         bottom.add(emptyForGood);
 
         JPanel page = new JPanel(new BorderLayout(0, 20));
@@ -82,6 +91,7 @@ public class DeletedPlaylistsPanel
         HummWindow.fill(list, rows, "Nothing here. Deleted playlists show up "
             + "here so you can restore them.");
         emptyForGood.setEnabled(window.getLibrary().deletedPlaylistCount() > 0);
+        restoreAll.setEnabled(window.getLibrary().deletedPlaylistCount() > 0);
     }
 
 

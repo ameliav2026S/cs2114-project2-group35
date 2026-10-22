@@ -41,7 +41,7 @@ public class MainPanel
         }
 
         column.add(HummWindow.centered(HummWindow.label("Humm",
-            HummWindow.heading(88f, true), HummWindow.PURPLE)), at);
+            HummWindow.heading(88f, true), HummWindow.HEAD)), at);
         column.add(HummWindow.bar(120, 8), at);
         column.add(HummWindow.centered(HummWindow.label("Music, kept close.",
             HummWindow.body(20f, false), HummWindow.MUTED)), at);
