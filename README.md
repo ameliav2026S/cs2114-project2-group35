@@ -7,7 +7,7 @@ Humm is a Java playlist organizer. It organizes songs; it doesn't play them. You
 
 Everything is stored in our own generic `LinkedChain<T>`. One chain class holds both songs and playlists.
 ## System diagram
-![System diagram](systems_diagram_p2.png)
+![System diagram](systems_diagram.png)
 
 ## How it fits together
 
