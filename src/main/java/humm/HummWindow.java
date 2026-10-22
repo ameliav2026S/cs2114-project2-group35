@@ -762,9 +762,12 @@ public class HummWindow
             }
             int w = getWidth();
             int h = getHeight();
-            g2.setColor(fill);
-            g2.fillRoundRect(0, 0, w, h, h, h);
-            if (WHITE.equals(fill))
+            if (!WHITE.equals(fill))
+            {
+                g2.setColor(fill);
+                g2.fillRoundRect(0, 0, w, h, h, h);
+            }
+            else
             {
                 g2.setColor(ink);
                 g2.setStroke(new java.awt.BasicStroke(2f));
